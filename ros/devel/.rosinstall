@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/dijkstra/Lidar/ros/devel/setup.sh
