@@ -1,3 +1,5 @@
 #gitignore
 
 ros/build/
+projet_libasserv.X/debug/
+projet_libasserv.X/build/
