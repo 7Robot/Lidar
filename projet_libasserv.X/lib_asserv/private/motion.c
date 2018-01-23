@@ -20,7 +20,6 @@ volatile MotionSequence motionSequence;
 
 /******************************    Fonctions    *******************************/
 
-// initialiser la lib d'asservissement
 /**
  * \fn void motion_init(void)
  * \brief Initalise le module motion
@@ -51,31 +50,65 @@ void motion_init(void) {
     motion_initialized = 1;
 }
 
+/**
+ * \fn void reset_last_order(Position pos)
+ * \brief Permet de reset un ordre suspendu
+ * 
+ * \param pos Position à atteindre
+ */
 void reset_last_order(Position pos) {
     lastPosOrder.mode = NO_ORDER;
     lastPosOrder.pos = pos;
     lastPosOrder.stop_distance = 0;
 }
-// assigner des valeurs Ã  la position (x, y et theta)
 
+/**
+ * \fn void set_position(Position pos)
+ * \brief Permet de choisir un point à atteindre
+ * 
+ * \param pos Position à atteindre
+ */
 void set_position(Position pos) {
     motionState.pos = pos;
 }
 
+/**
+ * \fn void set_position_x(float x)
+ * \brief Permet de choisir un point en x à atteindre
+ * 
+ * @param x Point en x à atteindre
+ */
 void set_position_x(float x) {
     motionState.pos.x = x;
 }
 
+/**
+ * \fn void set_position_y(float y)
+ * \brief Permet de choisir un point en y à atteindre
+ * 
+ * @param x Point en y à atteindre
+ */
 void set_position_y(float y) {
     motionState.pos.y = y;
 }
 
+/**
+ * \fn void set_position_t(float t)
+ * \brief Permet de choisir un angle à atteindre
+ * 
+ * @param x Valeur de l'angle à atteindre
+ */
 void set_position_t(float t) {
     motionState.pos.t = t;
 }
 
 // ajout pepino
-
+/**
+ * \fn void set_Constraint_vitesse_max(float vl_max)
+ * \brief Permet de choisir une vitesse linéaire max
+ * 
+ * \param vl_max vitesse linéaire max
+ */
 void set_Constraint_vitesse_max(float vl_max) {
     if (vl_max != 0) {
         motionConstraint.v_max.v = vl_max;
@@ -85,6 +118,12 @@ void set_Constraint_vitesse_max(float vl_max) {
     }
 }
 
+/**
+ * \fn void set_Constraint_vt_max(float vt_max)
+ * \brief Permet de choisir une vitesse angulaire max
+ * 
+ * \param vl_max vitesse angulaire max
+ */
 void set_Constraint_vt_max(float vt_max) {
     if (vt_max != 0) {
         motionConstraint.v_max.vt = vt_max;
@@ -95,7 +134,14 @@ void set_Constraint_vt_max(float vt_max) {
 }
 
 // ajout daniel
-
+/**
+ * \fn void set_Constraint_acceleration_max(float al_max, float at_max, float a_max)
+ * \brief Permet de choisir une accéleration max
+ * 
+ * \param al_max accéleration linéaire max
+ * \param at_max accéleration angulaire max
+ * \param a_max accélération max
+ */
 void set_Constraint_acceleration_max(float al_max, float at_max, float a_max) {
     float tab_default[] = DEFAULT_CONSTRAINT_A_MAX;
 
@@ -117,7 +163,12 @@ void set_Constraint_acceleration_max(float al_max, float at_max, float a_max) {
 }
 
 // assigner des valeurs Ã  la vitesse (vitesse et vitesse angulaire)
-
+/**
+ * \fn void set_speed(RobotState *state, Speed speed)
+ * \brief Permet de choisir la vitesse
+ * 
+ * \TODO finir la doc
+ */
 void set_speed(RobotState *state, Speed speed) {
     state->speed = speed;
 }

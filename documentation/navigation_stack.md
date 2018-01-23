@@ -1,3 +1,7 @@
+#Connect the lidar
+```
+sudo ifconfig [dev] -pointopoint 169.254.157.15
+```
 #Navigation stack
 
 doc officielle: http://wiki.ros.org/navigation
