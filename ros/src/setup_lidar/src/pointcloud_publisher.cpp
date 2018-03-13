@@ -34,7 +34,6 @@ public:
     		{
         		projector_.transformLaserScanToPointCloud(
           			"base_link",*scan_in, cloud,listener_);
-			std::cout << "Transforming" << std::endl;
     		}
     		catch (tf::TransformException& e)
     		{

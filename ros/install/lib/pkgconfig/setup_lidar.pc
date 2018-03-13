@@ -1,0 +1,8 @@
+prefix=/home/dijkstra/Lidar/ros/install
+
+Name: setup_lidar
+Description: Description of setup_lidar
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/dijkstra/Lidar/ros/install/lib 
+Requires: 
