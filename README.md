@@ -15,3 +15,6 @@ Dans ROS
 	Package setup_lidar
 		-tf_broadcaster: publie une tf. Modifier les valeurs pour adapter au robot.
 		-pointcloud_publisher: publie un pointcloud à partir des données du lidar. Cette node applique la tf sur le pointcloud.
+	
+	Package comm
+		-comm : réalise la communication entre ros et le pic et les autres nodes.
