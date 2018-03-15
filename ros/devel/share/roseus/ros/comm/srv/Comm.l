@@ -25,10 +25,10 @@
 (defmethod comm::CommRequest
   (:init
    (&key
-    ((:command __command) 0)
+    ((:command __command) "")
     )
    (send-super :init)
-   (setq _command (round __command))
+   (setq _command (string __command))
    self)
   (:command
    (&optional __command)
@@ -36,60 +36,58 @@
   (:serialization-length
    ()
    (+
-    ;; int8 _command
-    1
+    ;; string _command
+    4 (length _command)
     ))
   (:serialize
    (&optional strm)
    (let ((s (if strm strm
               (make-string-output-stream (send self :serialization-length)))))
-     ;; int8 _command
-       (write-byte _command s)
+     ;; string _command
+       (write-long (length _command) s) (princ _command s)
      ;;
      (if (null strm) (get-output-stream-string s))))
   (:deserialize
    (buf &optional (ptr- 0))
-   ;; int8 _command
-     (setq _command (sys::peek buf ptr- :char)) (incf ptr- 1)
-     (if (> _command 127) (setq _command (- _command 256)))
+   ;; string _command
+     (let (n) (setq n (sys::peek buf ptr- :integer)) (incf ptr- 4) (setq _command (subseq buf ptr- (+ ptr- n))) (incf ptr- n))
    ;;
    self)
   )
 
 (defclass comm::CommResponse
   :super ros::object
-  :slots (_error ))
+  :slots (_answer ))
 
 (defmethod comm::CommResponse
   (:init
    (&key
-    ((:error __error) 0)
+    ((:answer __answer) "")
     )
    (send-super :init)
-   (setq _error (round __error))
+   (setq _answer (string __answer))
    self)
-  (:error
-   (&optional __error)
-   (if __error (setq _error __error)) _error)
+  (:answer
+   (&optional __answer)
+   (if __answer (setq _answer __answer)) _answer)
   (:serialization-length
    ()
    (+
-    ;; int8 _error
-    1
+    ;; string _answer
+    4 (length _answer)
     ))
   (:serialize
    (&optional strm)
    (let ((s (if strm strm
               (make-string-output-stream (send self :serialization-length)))))
-     ;; int8 _error
-       (write-byte _error s)
+     ;; string _answer
+       (write-long (length _answer) s) (princ _answer s)
      ;;
      (if (null strm) (get-output-stream-string s))))
   (:deserialize
    (buf &optional (ptr- 0))
-   ;; int8 _error
-     (setq _error (sys::peek buf ptr- :char)) (incf ptr- 1)
-     (if (> _error 127) (setq _error (- _error 256)))
+   ;; string _answer
+     (let (n) (setq n (sys::peek buf ptr- :integer)) (incf ptr- 4) (setq _answer (subseq buf ptr- (+ ptr- n))) (incf ptr- n))
    ;;
    self)
   )
@@ -98,7 +96,7 @@
   :super ros::object
   :slots ())
 
-(setf (get comm::Comm :md5sum-) "e95065b3325cca9c0a0573ef228c8b1b")
+(setf (get comm::Comm :md5sum-) "0fa1ccfd0a5a431161710f45bbf0130a")
 (setf (get comm::Comm :datatype-) "comm/Comm")
 (setf (get comm::Comm :request) comm::CommRequest)
 (setf (get comm::Comm :response) comm::CommResponse)
@@ -106,26 +104,26 @@
 (defmethod comm::CommRequest
   (:response () (instance comm::CommResponse :init)))
 
-(setf (get comm::CommRequest :md5sum-) "e95065b3325cca9c0a0573ef228c8b1b")
+(setf (get comm::CommRequest :md5sum-) "0fa1ccfd0a5a431161710f45bbf0130a")
 (setf (get comm::CommRequest :datatype-) "comm/CommRequest")
 (setf (get comm::CommRequest :definition-)
-      "int8 command
+      "string command
 ---
-int8 error
+string answer
 
 ")
 
-(setf (get comm::CommResponse :md5sum-) "e95065b3325cca9c0a0573ef228c8b1b")
+(setf (get comm::CommResponse :md5sum-) "0fa1ccfd0a5a431161710f45bbf0130a")
 (setf (get comm::CommResponse :datatype-) "comm/CommResponse")
 (setf (get comm::CommResponse :definition-)
-      "int8 command
+      "string command
 ---
-int8 error
+string answer
 
 ")
 
 
 
-(provide :comm/Comm "e95065b3325cca9c0a0573ef228c8b1b")
+(provide :comm/Comm "0fa1ccfd0a5a431161710f45bbf0130a")
 
 

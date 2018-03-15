@@ -24,16 +24,16 @@ struct CommRequest_
   typedef CommRequest_<ContainerAllocator> Type;
 
   CommRequest_()
-    : command(0)  {
+    : command()  {
     }
   CommRequest_(const ContainerAllocator& _alloc)
-    : command(0)  {
+    : command(_alloc)  {
   (void)_alloc;
     }
 
 
 
-   typedef int8_t _command_type;
+   typedef std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other >  _command_type;
   _command_type command;
 
 
@@ -69,7 +69,7 @@ namespace message_traits
 
 
 
-// BOOLTRAITS {'IsFixedSize': True, 'IsMessage': True, 'HasHeader': False}
+// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': False}
 // {'std_msgs': ['/opt/ros/kinetic/share/std_msgs/cmake/../msg']}
 
 // !!!!!!!!!!! ['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_parsed_fields', 'constants', 'fields', 'full_name', 'has_header', 'header_present', 'names', 'package', 'parsed_fields', 'short_name', 'text', 'types']
@@ -79,12 +79,12 @@ namespace message_traits
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::comm::CommRequest_<ContainerAllocator> >
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::comm::CommRequest_<ContainerAllocator> const>
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
@@ -113,12 +113,12 @@ struct MD5Sum< ::comm::CommRequest_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "481ac5a494c3140a2539020bd74c82c7";
+    return "cba5e21e920a3a2b7b375cb65b64cdea";
   }
 
   static const char* value(const ::comm::CommRequest_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x481ac5a494c3140aULL;
-  static const uint64_t static_value2 = 0x2539020bd74c82c7ULL;
+  static const uint64_t static_value1 = 0xcba5e21e920a3a2bULL;
+  static const uint64_t static_value2 = 0x7b375cb65b64cdeaULL;
 };
 
 template<class ContainerAllocator>
@@ -137,7 +137,7 @@ struct Definition< ::comm::CommRequest_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "int8 command\n\
+    return "string command\n\
 ";
   }
 
@@ -176,7 +176,7 @@ struct Printer< ::comm::CommRequest_<ContainerAllocator> >
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::comm::CommRequest_<ContainerAllocator>& v)
   {
     s << indent << "command: ";
-    Printer<int8_t>::stream(s, indent + "  ", v.command);
+    Printer<std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other > >::stream(s, indent + "  ", v.command);
   }
 };
 

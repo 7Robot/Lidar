@@ -11,6 +11,7 @@ using namespace std;
 class PicCommunication{
 private:
   static serial::Serial uart;
+  static serial::Timeout timeout;
 public:
   PicCommunication()
   {
@@ -23,8 +24,10 @@ public:
 
     if(!uart.isOpen())
     {
+      timeout = serial::Timeout::simpleTimeout(1000);
       uart.setPort(UART_PORT);
       uart.setBaudrate(57600);
+      uart.setTimeout(timeout);
       uart.open();
       if(!uart.isOpen())
       {
@@ -38,24 +41,17 @@ public:
                   comm::Comm::Response &res)
   {
     string str;
-    res.error = 0;
-
-    //TODO Code à completer
-    switch(req.command)
-    {
-    case 0:
-      uart.write("GETPOS\n");
-      cout << uart.read(512) << endl;
-      break;
-    default:
-      res.error = -1;
-    }
+    uart.flush();
+    uart.write(req.command);
+    str = uart.read(256);
+    res.answer = str;
 
     return true;
   }
 };
 
 serial::Serial PicCommunication::uart;
+serial::Timeout PicCommunication::timeout;
 
 int main(int argc, char** argv)
 {

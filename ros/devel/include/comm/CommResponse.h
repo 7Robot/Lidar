@@ -24,17 +24,17 @@ struct CommResponse_
   typedef CommResponse_<ContainerAllocator> Type;
 
   CommResponse_()
-    : error(0)  {
+    : answer()  {
     }
   CommResponse_(const ContainerAllocator& _alloc)
-    : error(0)  {
+    : answer(_alloc)  {
   (void)_alloc;
     }
 
 
 
-   typedef int8_t _error_type;
-  _error_type error;
+   typedef std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other >  _answer_type;
+  _answer_type answer;
 
 
 
@@ -69,7 +69,7 @@ namespace message_traits
 
 
 
-// BOOLTRAITS {'IsFixedSize': True, 'IsMessage': True, 'HasHeader': False}
+// BOOLTRAITS {'IsFixedSize': False, 'IsMessage': True, 'HasHeader': False}
 // {'std_msgs': ['/opt/ros/kinetic/share/std_msgs/cmake/../msg']}
 
 // !!!!!!!!!!! ['__class__', '__delattr__', '__dict__', '__doc__', '__eq__', '__format__', '__getattribute__', '__hash__', '__init__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__setattr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', '_parsed_fields', 'constants', 'fields', 'full_name', 'has_header', 'header_present', 'names', 'package', 'parsed_fields', 'short_name', 'text', 'types']
@@ -79,12 +79,12 @@ namespace message_traits
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::comm::CommResponse_<ContainerAllocator> >
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
 struct IsFixedSize< ::comm::CommResponse_<ContainerAllocator> const>
-  : TrueType
+  : FalseType
   { };
 
 template <class ContainerAllocator>
@@ -113,12 +113,12 @@ struct MD5Sum< ::comm::CommResponse_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "99e53bce000fb6e8448591149afae401";
+    return "d7e708f879c94bb931716d8f4f130f30";
   }
 
   static const char* value(const ::comm::CommResponse_<ContainerAllocator>&) { return value(); }
-  static const uint64_t static_value1 = 0x99e53bce000fb6e8ULL;
-  static const uint64_t static_value2 = 0x448591149afae401ULL;
+  static const uint64_t static_value1 = 0xd7e708f879c94bb9ULL;
+  static const uint64_t static_value2 = 0x31716d8f4f130f30ULL;
 };
 
 template<class ContainerAllocator>
@@ -137,7 +137,7 @@ struct Definition< ::comm::CommResponse_<ContainerAllocator> >
 {
   static const char* value()
   {
-    return "int8 error\n\
+    return "string answer\n\
 \n\
 ";
   }
@@ -157,7 +157,7 @@ namespace serialization
   {
     template<typename Stream, typename T> inline static void allInOne(Stream& stream, T m)
     {
-      stream.next(m.error);
+      stream.next(m.answer);
     }
 
     ROS_DECLARE_ALLINONE_SERIALIZER
@@ -176,8 +176,8 @@ struct Printer< ::comm::CommResponse_<ContainerAllocator> >
 {
   template<typename Stream> static void stream(Stream& s, const std::string& indent, const ::comm::CommResponse_<ContainerAllocator>& v)
   {
-    s << indent << "error: ";
-    Printer<int8_t>::stream(s, indent + "  ", v.error);
+    s << indent << "answer: ";
+    Printer<std::basic_string<char, std::char_traits<char>, typename ContainerAllocator::template rebind<char>::other > >::stream(s, indent + "  ", v.answer);
   }
 };
 

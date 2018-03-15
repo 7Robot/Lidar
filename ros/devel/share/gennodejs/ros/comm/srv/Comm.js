@@ -28,7 +28,7 @@ class CommRequest {
         this.command = initObj.command
       }
       else {
-        this.command = 0;
+        this.command = '';
       }
     }
   }
@@ -36,7 +36,7 @@ class CommRequest {
   static serialize(obj, buffer, bufferOffset) {
     // Serializes a message object of type CommRequest
     // Serialize message field [command]
-    bufferOffset = _serializer.int8(obj.command, buffer, bufferOffset);
+    bufferOffset = _serializer.string(obj.command, buffer, bufferOffset);
     return bufferOffset;
   }
 
@@ -45,12 +45,14 @@ class CommRequest {
     let len;
     let data = new CommRequest(null);
     // Deserialize message field [command]
-    data.command = _deserializer.int8(buffer, bufferOffset);
+    data.command = _deserializer.string(buffer, bufferOffset);
     return data;
   }
 
   static getMessageSize(object) {
-    return 1;
+    let length = 0;
+    length += object.command.length;
+    return length + 4;
   }
 
   static datatype() {
@@ -60,13 +62,13 @@ class CommRequest {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '481ac5a494c3140a2539020bd74c82c7';
+    return 'cba5e21e920a3a2b7b375cb65b64cdea';
   }
 
   static messageDefinition() {
     // Returns full string definition for message
     return `
-    int8 command
+    string command
     
     `;
   }
@@ -81,7 +83,7 @@ class CommRequest {
       resolved.command = msg.command;
     }
     else {
-      resolved.command = 0
+      resolved.command = ''
     }
 
     return resolved;
@@ -92,22 +94,22 @@ class CommResponse {
   constructor(initObj={}) {
     if (initObj === null) {
       // initObj === null is a special case for deserialization where we don't initialize fields
-      this.error = null;
+      this.answer = null;
     }
     else {
-      if (initObj.hasOwnProperty('error')) {
-        this.error = initObj.error
+      if (initObj.hasOwnProperty('answer')) {
+        this.answer = initObj.answer
       }
       else {
-        this.error = 0;
+        this.answer = '';
       }
     }
   }
 
   static serialize(obj, buffer, bufferOffset) {
     // Serializes a message object of type CommResponse
-    // Serialize message field [error]
-    bufferOffset = _serializer.int8(obj.error, buffer, bufferOffset);
+    // Serialize message field [answer]
+    bufferOffset = _serializer.string(obj.answer, buffer, bufferOffset);
     return bufferOffset;
   }
 
@@ -115,13 +117,15 @@ class CommResponse {
     //deserializes a message object of type CommResponse
     let len;
     let data = new CommResponse(null);
-    // Deserialize message field [error]
-    data.error = _deserializer.int8(buffer, bufferOffset);
+    // Deserialize message field [answer]
+    data.answer = _deserializer.string(buffer, bufferOffset);
     return data;
   }
 
   static getMessageSize(object) {
-    return 1;
+    let length = 0;
+    length += object.answer.length;
+    return length + 4;
   }
 
   static datatype() {
@@ -131,13 +135,13 @@ class CommResponse {
 
   static md5sum() {
     //Returns md5sum for a message object
-    return '99e53bce000fb6e8448591149afae401';
+    return 'd7e708f879c94bb931716d8f4f130f30';
   }
 
   static messageDefinition() {
     // Returns full string definition for message
     return `
-    int8 error
+    string answer
     
     
     `;
@@ -149,11 +153,11 @@ class CommResponse {
       msg = {};
     }
     const resolved = new CommResponse(null);
-    if (msg.error !== undefined) {
-      resolved.error = msg.error;
+    if (msg.answer !== undefined) {
+      resolved.answer = msg.answer;
     }
     else {
-      resolved.error = 0
+      resolved.answer = ''
     }
 
     return resolved;
@@ -163,6 +167,6 @@ class CommResponse {
 module.exports = {
   Request: CommRequest,
   Response: CommResponse,
-  md5sum() { return 'e95065b3325cca9c0a0573ef228c8b1b'; },
+  md5sum() { return '0fa1ccfd0a5a431161710f45bbf0130a'; },
   datatype() { return 'comm/Comm'; }
 };

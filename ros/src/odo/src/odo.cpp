@@ -14,11 +14,13 @@ int main(int argc, char** argv)
 
   comm::Comm srv;
 
-  srv.request.command = 0;
+  srv.request.command = "\nGETPOS\n";
+
+  cout << "Command : " << srv.request.command << endl;
 
   if(client.call(srv))
   {
-    ROS_INFO("Error : %d", (int)srv.response.error);
+    cout << "Answer : " << srv.response.answer << endl;
   }
   else
   {

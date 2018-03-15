@@ -1,3 +1,3 @@
-int8 command
+string command
 ---
-int8 error
+string answer
