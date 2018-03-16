@@ -39,6 +39,8 @@ include_directories(
 
 ## Declare a C++ library
 add_executable(comm src/comm.cpp)
+add_executable(testComm src/testComm.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(comm ${catkin_LIBRARIES})
+target_link_libraries(testComm ${catkin_LIBRARIES})
