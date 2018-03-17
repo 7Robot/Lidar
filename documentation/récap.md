@@ -20,22 +20,12 @@ Maintenant que les bases sont posées, pour le moment (01/02/2018), je (Crazer) 
 Le détail de ce sur quoi je suis parti est là:
 http://wiki.ros.org/navigation/Tutorials/RobotSetup/
 
-Pour le moment, je suis allé jusqu'à l'étape 1.3.
-Maintenant, il faut s'occuper de l'odométrie. Je pense que la doc pour est dans le lien précédent.
+Pour le moment, je suis allé jusqu'à l'étape 1.4.
+Maintenant, il faut s'occuper de la partie 2. Je pense que la doc est dans le lien précédent.
 Il faut,
-  -Faire une node qui permet de communiquer entre le système et la carte topics
-    Une pour le PC pour le dev
-    Une pour la raspi pour la coupe.
-  Pour cela, je sais pas trop sur quoi partir. Pour la partie de comment fonctionne la communication, Thibaut pourra vous renseigner. Après, il y a plusieurs moyen de récupérer ces infos sur l'ordi. A vous de voir.
-  Cette node pourra ensuite, transmettre les différentes informations au reste du système via des messages (topics)
-  On se servira donc de cette node pour transmettre les info propre à l'odométrie.
-  L'objectif de n'avoir qu'une seul node qui communique est de pouvoir facilement identifier les futurs problèmes.
+  -Faire une la costmap
 
-  -Faire une node qui récupère les info de l'odométrie depuis la node précédente, puis les publie au bon format comme indiqué dans le tuto.
-
-Une fois que ce sera fait, je n'ai plus de plan. Il vous faudra alors être autonome.
+  -Faire un controller pour piloter le robot
 
 Vous pouvez venir me poser des questions, je vous répondrais peut être.
-Si vous pensez que vous êtes perdu, ou que vous comprenez pas, RTFM. J'ai pas la science infuse et c'est comme ça que je fonctionne.
-Enfin, J'espère que vous serez capable de faire quelque chose sans moi. Personne n'est indispensable ni irremplaçable.
-J'ai besoin de prendre du temps pour moi. Je vais donc faire un break. Je sais pas quand je recommencerais à travailler avec vous.
+Si vous pensez que vous êtes perdu, ou que vous comprenez pas, RTFM.

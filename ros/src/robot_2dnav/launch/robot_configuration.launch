@@ -1,0 +1,13 @@
+<launch>
+  <node pkg="comm" type="communication_service" name="comm" output="screen">
+  </node>
+  
+  <node pkg="setup_lidar" type="pointcloud_publisher" name="pointcloud_publisher" output="screen">
+  </node>
+
+  <node pkg="odo" type="odometry_publisher" name="odo" output="screen">
+  </node>
+
+  <node pkg="setup_lidar" type="tf_broadcaster" name="tf_broadcaster" output="screen">
+  </node>
+</launch>

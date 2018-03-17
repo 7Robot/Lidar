@@ -1,14 +1,19 @@
-#Connect the lidar
+#Navigation stack
+
+##Connect the lidar
 ```
 sudo ifconfig [dev] -pointopoint 169.254.157.15
 ```
-#Navigation stack
 
-doc officielle: http://wiki.ros.org/navigation
+##doc officielle: http://wiki.ros.org/navigation
 
 Setup:
-	http://wiki.ros.org/navigation/Tutorials/RobotSetup
-	Transform laser_scan into cloudpoint http://wiki.ros.org/laser_pipeline/Tutorials/IntroductionToWorkingWithLaserScannerData
+	Global:
+		http://wiki.ros.org/navigation/Tutorials/RobotSetup
+	Transform laser_scan into cloudpoint:
+		http://wiki.ros.org/laser_pipeline/Tutorials/IntroductionToWorkingWithLaserScannerData
+	Odometry
+		http://wiki.ros.org/navigation/Tutorials/RobotSetup/Odom
 
 Odo uart install serial :
 ```
