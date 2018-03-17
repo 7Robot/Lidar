@@ -10,21 +10,13 @@
 
 using namespace std;
 
-void split(string s)
+struct not_digit
 {
-  vector<string> result;
-  string delimiter1 = ",";
-  string delimiter2 = ":";
-  size_t pos = 0;
-  string token;
-
-  while ((pos = s.find(delimiter)) != string::npos)
+  bool operator()(const char c)
   {
-      token = s.substr(0, pos);
-      result.push_back(token);
-      s.erase(0, pos + delimiter.length());
+    return c != ',' && !std::isdigit(c) && c != '-' && c != '.';
   }
-}
+};
 
 int main(int argc, char** argv)
 {
@@ -33,8 +25,10 @@ int main(int argc, char** argv)
 
   ros::ServiceClient client = n.serviceClient<comm::Comm>("pic_pi_comm");
   comm::Comm srv;
-  char str[45];
-  char trash[5];
+  string str;
+  char trash;
+  not_digit not_a_digit;
+  std::string::iterator end;
 
   ros::Publisher odom_pub = n.advertise<nav_msgs::Odometry>("odom", 50);
   tf::TransformBroadcaster odom_broadcaster;
@@ -46,8 +40,6 @@ int main(int argc, char** argv)
   float th = 0.0;
 
   float v = 0;
-  double vx = 0;
-  double vy = -0;
   float vth = 0;
 
   ros::Time current_time, last_time;
@@ -58,10 +50,11 @@ int main(int argc, char** argv)
   while(n.ok()){
     if(client.call(srv))
     {
-      split((string)srv.response.answer);
-      strcpy(str, ((string)srv.response.answer).c_str());
-      cout << str << endl;
-      sscanf(str, "%s %f %s %f %s %f %s %f", trash, &x, &y, &th, &v, &vth);
+      str = (string)srv.response.answer;
+      end = std::remove_if(str.begin(), str.end(), not_a_digit);
+      string data(str.begin(), end);
+      stringstream ss(data);
+      ss >> x >> trash >> y >> trash >> th >> trash >> v >> trash >> vth;
       cout << x << ' ' << y << ' ' << th << ' ' << v << ' ' << vth << endl;
     }
     else
@@ -71,16 +64,6 @@ int main(int argc, char** argv)
 
     ros::spinOnce();               // check for incoming messages
     current_time = ros::Time::now();
-
-    //compute odometry in a typical way given the velocities of the robot
-    double dt = (current_time - last_time).toSec();
-    double delta_x = (vx * cos(th) - vy * sin(th)) * dt;
-    double delta_y = (vx * sin(th) + vy * cos(th)) * dt;
-    double delta_th = vth * dt;
-
-    x += delta_x;
-    y += delta_y;
-    th += delta_th;
 
     //since all odometry is 6DOF we'll need a quaternion created from yaw
     geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(th);
@@ -112,8 +95,8 @@ int main(int argc, char** argv)
 
     //set the velocity
     odom.child_frame_id = "base_link";
-    odom.twist.twist.linear.x = vx;
-    odom.twist.twist.linear.y = vy;
+    odom.twist.twist.linear.x = v * cos(th);
+    odom.twist.twist.linear.y = v * sin(th);
     odom.twist.twist.angular.z = vth;
 
     //publish the message
