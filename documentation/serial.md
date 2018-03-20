@@ -15,3 +15,4 @@ communication:
 
 Problem with super user
   https://answers.ros.org/question/189457/rosrun-as-super-user/
+  https://answers.ros.org/question/46790/failed-to-open-port-devttyusb0/
