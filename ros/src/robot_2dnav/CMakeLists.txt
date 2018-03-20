@@ -8,7 +8,7 @@ project(robot_2dnav)
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  move_base
+  #move_base
   odo
   setup_lidar
 )

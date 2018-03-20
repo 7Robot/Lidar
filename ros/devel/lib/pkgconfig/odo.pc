@@ -1,8 +1,8 @@
-prefix=/home/dijkstra/Lidar/ros/devel
+prefix=/home/alba/Lidar/ros/devel
 
 Name: odo
 Description: Description of odo
 Version: 0.0.0
 Cflags: 
-Libs: -L/home/dijkstra/Lidar/ros/devel/lib 
+Libs: -L/home/alba/Lidar/ros/devel/lib 
 Requires: 

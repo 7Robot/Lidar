@@ -1,8 +1,8 @@
-prefix=/home/dijkstra/Lidar/ros/devel
+prefix=/home/alba/Lidar/ros/devel
 
 Name: comm
 Description: Description of comm
 Version: 0.0.0
-Cflags: -I/home/dijkstra/Lidar/ros/devel/include -I/home/dijkstra/Lidar/ros/src/comm/include
-Libs: -L/home/dijkstra/Lidar/ros/devel/lib 
+Cflags: -I/home/alba/Lidar/ros/devel/include
+Libs: -L/home/alba/Lidar/ros/devel/lib 
 Requires: std_msgs
