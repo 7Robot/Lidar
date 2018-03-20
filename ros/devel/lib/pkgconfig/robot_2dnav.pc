@@ -1,0 +1,8 @@
+prefix=/home/dijkstra/Lidar/ros/devel
+
+Name: robot_2dnav
+Description: Description of robot_2dnav
+Version: 0.0.0
+Cflags: 
+Libs: -L/home/dijkstra/Lidar/ros/devel/lib 
+Requires: 
