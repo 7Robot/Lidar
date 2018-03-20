@@ -50,7 +50,7 @@ public:
 int main(int argc, char** argv)
 {
 
-  ros::init(argc, argv, "my_scan_to_cloud");
+  ros::init(argc, argv, "pointcloud_publisher");
   ros::NodeHandle n;
 	LaserScanToPointCloud lstopc(n);
 

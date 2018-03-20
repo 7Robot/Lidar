@@ -55,7 +55,7 @@ serial::Timeout PicCommunication::timeout;
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "comm_server");
+  ros::init(argc, argv, "comm");
   ros::NodeHandle n;
 
   PicCommunication::init();

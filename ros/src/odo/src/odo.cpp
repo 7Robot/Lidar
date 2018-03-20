@@ -20,7 +20,7 @@ struct not_digit
 
 int main(int argc, char** argv)
 {
-  ros::init(argc, argv, "test_serial");
+  ros::init(argc, argv, "odo");
   ros::NodeHandle n;
 
   ros::ServiceClient client = n.serviceClient<comm::Comm>("pic_pi_comm");

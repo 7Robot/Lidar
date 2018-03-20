@@ -12,3 +12,6 @@ communication:
   port: /dev/ttyUSB0 (PC)
         /dev/AMA0 (RPI)
   ending character: '\n'
+
+Problem with super user
+  https://answers.ros.org/question/189457/rosrun-as-super-user/

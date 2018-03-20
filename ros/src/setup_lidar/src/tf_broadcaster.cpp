@@ -2,7 +2,7 @@
 #include <tf/transform_broadcaster.h>
 
 int main(int argc, char** argv){
-  ros::init(argc, argv, "robot_tf_publisher");
+  ros::init(argc, argv, "tf_broadcaster");
   ros::NodeHandle n;
 
   ros::Rate r(100);
