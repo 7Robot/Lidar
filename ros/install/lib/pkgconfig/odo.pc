@@ -1,8 +1,0 @@
-prefix=/home/alba/Lidar/ros/install
-
-Name: odo
-Description: Description of odo
-Version: 0.0.0
-Cflags: 
-Libs: -L/home/alba/Lidar/ros/install/lib 
-Requires: 

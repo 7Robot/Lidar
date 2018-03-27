@@ -1,11 +1,11 @@
-#Navigation stack
+# Navigation stack
 
-##Connect the lidar
+## Connect the lidar
 ```
 sudo ifconfig [dev] -pointopoint 169.254.157.15
 ```
 
-##doc officielle: http://wiki.ros.org/navigation
+## doc officielle: http://wiki.ros.org/navigation
 
 Setup:
 	Global:
