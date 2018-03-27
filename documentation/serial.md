@@ -1,11 +1,11 @@
-#Serial communication with pic board
+# Serial communication with pic board
 
-##install
+## install
 ```
 sudo apt-get install ros-kinetic-serial
 ```
 
-##doc officielle http://docs.ros.org/kinetic/api/serial/html/index.html
+## doc officielle http://docs.ros.org/kinetic/api/serial/html/index.html
 
 communication:
   baudrate: 57600

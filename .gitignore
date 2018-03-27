@@ -2,5 +2,7 @@
 
 ros/build/
 ros/devel/lib
+ros/devel/share
+ros/install
 projet_libasserv.X/debug/
 projet_libasserv.X/build/

@@ -1,4 +1,4 @@
-#Récapitulatif de ce qu'il faut faire
+# Récapitulatif de ce qu'il faut faire
 
 L'objectif de ce repository est de créer un sysème ROS qui permettent d'utiliser le lidar pour la coupe de france de robotique.
 Le lidar est un radar laser. Il collecte un nuage de point qu'il transmet ensuite via un bus ethernet.

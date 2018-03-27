@@ -23,5 +23,8 @@ include_directories(
 ## Declare a C++ library
 add_executable(odo src/odo.cpp)
 
+## Add dependencies
+add_dependencies(odo comm_generate_messages_cpp)
+
 ## Specify libraries to link a library or executable target against
 target_link_libraries(odo ${catkin_LIBRARIES})

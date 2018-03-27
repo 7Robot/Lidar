@@ -3,6 +3,6 @@ prefix=/home/alba/Lidar/ros/devel
 Name: robot_2dnav
 Description: Description of robot_2dnav
 Version: 0.0.0
-Cflags:
-Libs: -L/home/alba/Lidar/ros/devel/lib
-Requires:
+Cflags: 
+Libs: -L/home/alba/Lidar/ros/devel/lib 
+Requires: 

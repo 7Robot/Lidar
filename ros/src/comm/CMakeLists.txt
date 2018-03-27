@@ -41,6 +41,10 @@ include_directories(
 add_executable(comm src/comm.cpp)
 add_executable(testComm src/testComm.cpp)
 
+## Add dependencies
+add_dependencies(comm comm_generate_messages_cpp)
+add_dependencies(testComm comm_generate_messages_cpp)
+
 ## Specify libraries to link a library or executable target against
 target_link_libraries(comm ${catkin_LIBRARIES})
 target_link_libraries(testComm ${catkin_LIBRARIES})
