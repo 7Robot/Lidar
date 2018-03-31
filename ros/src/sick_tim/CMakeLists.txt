@@ -46,12 +46,7 @@ install(TARGETS sick_tim_3xx
 
 install(
     TARGETS
-        #sick_tim310s01
-        #sick_tim310
-        #sick_tim310_1130000m01
         sick_tim551_2050001
-        #sick_mrs1000
-        #sick_tim_datagram_test
     RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(FILES include/${PROJECT_NAME}/abstract_parser.h

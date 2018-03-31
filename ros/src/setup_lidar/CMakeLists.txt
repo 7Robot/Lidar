@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   message_filters
   roscpp
   sensor_msgs
+  nav_msgs
   tf
 )
 
@@ -29,8 +30,10 @@ include_directories(
 
 ## Declare a C++ executable
 add_executable(pointcloud_publisher src/pointcloud_publisher.cpp)
+add_executable(detect_obstacle src/detect_obstacle.cpp)
 add_executable(tf_broadcaster src/tf_broadcaster.cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(pointcloud_publisher ${catkin_LIBRARIES})
+target_link_libraries(detect_obstacle ${catkin_LIBRARIES})
 target_link_libraries(tf_broadcaster ${catkin_LIBRARIES})
