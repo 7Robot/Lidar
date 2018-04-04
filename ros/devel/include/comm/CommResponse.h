@@ -39,7 +39,6 @@ struct CommResponse_
 
 
 
-
   typedef boost::shared_ptr< ::comm::CommResponse_<ContainerAllocator> > Ptr;
   typedef boost::shared_ptr< ::comm::CommResponse_<ContainerAllocator> const> ConstPtr;
 

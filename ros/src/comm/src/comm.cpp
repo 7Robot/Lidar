@@ -4,7 +4,7 @@
 #include <string>
 #include "comm/Comm.h"
 
-#define UART_PORT "/dev/ttyUSB0"
+#define UART_PORT "/dev/ttyAMA0"
 
 using namespace std;
 
