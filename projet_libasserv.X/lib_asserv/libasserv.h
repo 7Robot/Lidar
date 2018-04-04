@@ -71,7 +71,7 @@ typedef struct {
 /*############################################################################*/
 
 #ifndef DEFAULT_ODO_COEFS // {tic/m, m/tic, entre roues}
-#define DEFAULT_ODO_COEFS {54471, 0.0000183581, 0.26962}
+#define DEFAULT_ODO_COEFS {53876, 0.000018561, 0.184}
 #endif
 
 #ifndef DEFAULT_PERIOD
