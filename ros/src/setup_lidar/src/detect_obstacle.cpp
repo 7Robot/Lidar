@@ -4,18 +4,23 @@
 #include <ros/ros.h>
 
 #include <message_filters/subscriber.h>
-#include <message_filters/time_synchronizer.h>
+#include <message_filters/synchronizer.h>
+#include <message_filters/sync_policies/approximate_time.h>
 
 #include <laser_geometry/laser_geometry.h>
 #include <nav_msgs/Odometry.h>
+#include <tf/LinearMath/Matrix3x3.h>
+#include <tf/LinearMath/Quaternion.h>
 
 #define X_MIN 0
 #define Y_MIN 0
 
-#define X_MAX 1
-#define Y_MAX 1
+#define X_MAX 5
+#define Y_MAX 3
 
 #define PI 3.14159265
+
+typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::LaserScan, nav_msgs::Odometry> sync_policy;
 
 class Obastacle_detector
 {
@@ -23,13 +28,13 @@ private:
   ros::NodeHandle n_;
   message_filters::Subscriber<sensor_msgs::LaserScan> laser_sub_;
   message_filters::Subscriber<nav_msgs::Odometry> odom_sub_;
-  message_filters::TimeSynchronizer<sensor_msgs::LaserScan, nav_msgs::Odometry> sync;
+  message_filters::Synchronizer<sync_policy> sync;
 
 public:
   Obastacle_detector(ros::NodeHandle n) : n_(n),
     laser_sub_(n_, "scan", 2),
     odom_sub_(n_, "odom", 2),
-    sync(laser_sub_, odom_sub_, 4)
+    sync(sync_policy(10), laser_sub_, odom_sub_)
   {
       sync.registerCallback(boost::bind(&callback, _1, _2));
   }
@@ -80,26 +85,33 @@ public:
   static void callback(const sensor_msgs::LaserScan::ConstPtr& scan_in,
                        const nav_msgs::Odometry::ConstPtr& odom_in)
   {
-    float x = odom_in->pose.pose.position.x;
+    /*float x = odom_in->pose.pose.position.x;
     float y = odom_in->pose.pose.position.y;
-    float theta = odom_in->pose.pose.orientation.w;
-    float angle = scan_in->angle_min + theta;
+    tf::Quaternion q(odom_in->pose.pose.orientation.x,
+                     odom_in->pose.pose.orientation.y,
+                     odom_in->pose.pose.orientation.z,
+                     odom_in->pose.pose.orientation.w);
+    tf::Matrix3x3 m(q);
+    double theta = 0;
+    double trash;
+    m.getRPY(trash, trash, theta);*/
+    float angle = scan_in->angle_min;// + theta;
     float increment = scan_in->angle_increment;
-    float d;
+    bool obstacle = false;
 
-    std::cout << scan_in->ranges.size() << scan_in->angle_min << scan_in->angle_max << std::endl;
-
-
-    for(int i = 0; i < scan_in->ranges.size(); i++)
+    for(int i = 319; i < 502; i += 2)
     {
-      angle += scan_in->angle_increment;
-      d = distToBorder(x, y, angle);
-      if(d - scan_in->ranges[i] > 0,15)
+      angle += 2 * scan_in->angle_increment;
+      //d = distToBorder(x, y, angle);
+      if(scan_in->ranges[i] < 0.15)
       {
-        std::cout << "Obstacle détecter" << std::endl;
+        obstacle = true;
+        //std::cout << i << " Obstacle détecter: " << angle << " distance: " << scan_in->ranges[i] << std::endl;
       }
 
     }
+    if(obstacle)
+      std::cout << odom_in->header.stamp.sec << " " << scan_in->header.stamp.sec << " Obstacle" << std::endl;
   }
 };
 
