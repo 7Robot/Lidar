@@ -52,7 +52,7 @@ typedef struct {
 
 // {v, vt} v = 0.9 * v max moteur, vt = v/(entre roues/2)
 #ifndef DEFAULT_CONSTRAINT_V_MAX
-#define DEFAULT_CONSTRAINT_V_MAX {0.9, 4}
+#define DEFAULT_CONSTRAINT_V_MAX {0.9, 2.14}
 #endif
 
 /* {a, at, v_vt} a = a max sans glissement, at = a/(entre roues/2),

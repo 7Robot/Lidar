@@ -80,6 +80,8 @@ void __attribute__((interrupt, auto_psv)) _SPI2ErrInterrupt(void) {
     static int tics_g, tics_d;
     // commandes gauches et droite
     static float commande_g, commande_d;
+    
+    
 
     // récupération des données des compteurs qei gauche et droit
     tics_g = (int) POS1CNT;
