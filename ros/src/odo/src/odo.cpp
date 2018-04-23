@@ -46,7 +46,7 @@ int main(int argc, char** argv)
   current_time = ros::Time::now();
   last_time = ros::Time::now();
 
-  ros::Rate r(3.0);
+  ros::Rate r(10.0);
   while(n.ok()){
     if(client.call(srv))
     {
@@ -55,7 +55,7 @@ int main(int argc, char** argv)
       string data(str.begin(), end);
       stringstream ss(data);
       ss >> x >> trash >> y >> trash >> th >> trash >> v >> trash >> vth;
-      cout << x << ' ' << y << ' ' << th << ' ' << v << ' ' << vth << endl;
+      cout << x << ' ' << y << ' ' << th << std::endl;
     }
     else
     {
