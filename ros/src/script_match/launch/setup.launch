@@ -5,7 +5,7 @@
          <param name="timelimit" type="int" value="5" />
   </node>
 
-  <node pkg="setup_lidar" type="detect_obtacle" name="detect_obtacle" output="screen">
+  <node pkg="setup_lidar" type="detect_obstacle" name="detect_obtacle" output="screen">
   </node>
 
   <node pkg="comm" type="comm" name="comm" output="screen">

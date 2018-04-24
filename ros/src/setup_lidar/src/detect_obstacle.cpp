@@ -102,22 +102,34 @@ public:
     float angle = scan_in->angle_min;// + theta;
     float increment = scan_in->angle_increment;
     bool obstacle = false;
+    bool p_obstacle = false;
 
     for(int i = 319; i < 502; i += 2)
     {
       angle += 2 * scan_in->angle_increment;
       //d = distToBorder(x, y, angle);
-      if(scan_in->ranges[i] < 0.15)
+      if(scan_in->ranges[i] < 0.25)
       {
         obstacle = true;
       }
 
     }
     if(obstacle)
+    {
+      srv.request.command = "STOP\n";
       client.call(srv);
+      p_obstacle = true;
+    }
       //std::cout << odom_in->header.stamp.sec << " " << scan_in->header.stamp.sec << " Obstacle" << std::endl;
     else
-      ;
+    {
+      if(p_obstacle)
+      {
+        srv.request.command = "RESTART\n";
+        client.call(srv);
+        p_obstacle = false;
+      }
+    }
   }
 };
 
@@ -127,7 +139,6 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "pointcloud_publisher");
   ros::NodeHandle n;
   client = n.serviceClient<comm::Comm>("pic_pi_comm");
-  srv.request.command = "STOP\n";
 	Obastacle_detector detector(n);
 
  	ros::spin();
