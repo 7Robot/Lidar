@@ -3,6 +3,8 @@
 ros/build/
 ros/devel/lib
 ros/devel/share
+ros/devel/_setup_util.py
+ros/devel/setup.sh
 ros/install
 projet_libasserv.X/debug/
 projet_libasserv.X/build/

@@ -1,5 +1,6 @@
 #include <iostream>
 #include <math.h>
+#include "comm/Comm.h"
 
 #include <ros/ros.h>
 
@@ -22,6 +23,9 @@
 
 typedef message_filters::sync_policies::ApproximateTime<sensor_msgs::LaserScan, nav_msgs::Odometry> sync_policy;
 
+ros::ServiceClient client;
+comm::Comm srv;
+
 class Obastacle_detector
 {
 private:
@@ -36,7 +40,7 @@ public:
     odom_sub_(n_, "odom", 2),
     sync(sync_policy(10), laser_sub_, odom_sub_)
   {
-      sync.registerCallback(boost::bind(&callback, _1, _2));
+    sync.registerCallback(boost::bind(&callback, _1, _2));
   }
 
   static float distToBorder(float &x, float &y, float &th)
@@ -106,12 +110,14 @@ public:
       if(scan_in->ranges[i] < 0.15)
       {
         obstacle = true;
-        //std::cout << i << " Obstacle détecter: " << angle << " distance: " << scan_in->ranges[i] << std::endl;
       }
 
     }
     if(obstacle)
-      std::cout << odom_in->header.stamp.sec << " " << scan_in->header.stamp.sec << " Obstacle" << std::endl;
+      client.call(srv);
+      //std::cout << odom_in->header.stamp.sec << " " << scan_in->header.stamp.sec << " Obstacle" << std::endl;
+    else
+      ;
   }
 };
 
@@ -120,6 +126,8 @@ int main(int argc, char** argv)
 
   ros::init(argc, argv, "pointcloud_publisher");
   ros::NodeHandle n;
+  client = n.serviceClient<comm::Comm>("pic_pi_comm");
+  srv.request.command = "STOP\n";
 	Obastacle_detector detector(n);
 
  	ros::spin();
