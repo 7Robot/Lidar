@@ -14,13 +14,19 @@ int main(int argc, char** argv)
 
   comm::Comm srv;
 
+  ros::Time temps;
+
   srv.request.command = "GETODO\n";
 
   for(int i = 0; i < 5; i++)
   {
+    temps = ros::Time::now();
+    cout << "temps:" << temps.sec << " " << temps.nsec << endl;
     if(client.call(srv))
     {
-      cout << "Answer : " << srv.response.answer << endl;
+      //cout << "Answer : " << srv.response.answer << endl;
+      temps = ros::Time::now();
+      cout << "temps:" << temps.sec << " " << temps.nsec << endl;
     }
     else
     {

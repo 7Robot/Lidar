@@ -20,8 +20,6 @@ public:
 
   static int init()
   {
-    ROS_INFO("Starting comm server");
-
     if(!uart.isOpen())
     {
       timeout = serial::Timeout::simpleTimeout(1000);
