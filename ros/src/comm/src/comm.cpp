@@ -22,7 +22,7 @@ public:
   {
     if(!uart.isOpen())
     {
-      timeout = serial::Timeout::simpleTimeout(1000);
+      timeout = serial::Timeout::simpleTimeout(50);
       uart.setPort(UART_PORT);
       uart.setBaudrate(57600);
       uart.setTimeout(timeout);

@@ -24,7 +24,7 @@ int main(int argc, char** argv)
     cout << "temps:" << temps.sec << " " << temps.nsec << endl;
     if(client.call(srv))
     {
-      //cout << "Answer : " << srv.response.answer << endl;
+      cout << "Answer : " << srv.response.answer << endl;
       temps = ros::Time::now();
       cout << "temps:" << temps.sec << " " << temps.nsec << endl;
     }
