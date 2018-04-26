@@ -114,16 +114,15 @@ public:
       }
 
     }
-    if(obstacle)
+    if(obstacle && !p_obstacle)
     {
       srv.request.command = "STOP\n";
       client.call(srv);
       p_obstacle = true;
     }
-      //std::cout << odom_in->header.stamp.sec << " " << scan_in->header.stamp.sec << " Obstacle" << std::endl;
     else
     {
-      if(p_obstacle)
+      if(p_obstacle && !obstacle)
       {
         srv.request.command = "RESTART\n";
         client.call(srv);

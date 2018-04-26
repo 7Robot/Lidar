@@ -34,6 +34,8 @@ add_executable(pointcloud_publisher src/pointcloud_publisher.cpp)
 add_executable(detect_obstacle src/detect_obstacle.cpp)
 add_executable(tf_broadcaster src/tf_broadcaster.cpp)
 
+add_dependencies(detect_obstacle comm_generate_messages_cpp)
+
 ## Specify libraries to link a library or executable target against
 target_link_libraries(pointcloud_publisher ${catkin_LIBRARIES})
 target_link_libraries(detect_obstacle ${catkin_LIBRARIES})
