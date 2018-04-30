@@ -108,7 +108,7 @@ public:
     {
       angle += 2 * scan_in->angle_increment;
       //d = distToBorder(x, y, angle);
-      if(scan_in->ranges[i] < 0.25)
+      if(scan_in->ranges[i] < 0.15)
       {
         obstacle = true;
       }

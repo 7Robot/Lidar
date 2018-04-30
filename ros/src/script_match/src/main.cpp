@@ -37,6 +37,7 @@ void move_xy(ros::ServiceClient client, float x, float y)
 }
 int main(int argc, char** argv)
 {
+  int state = 0;
   ros::init(argc, argv, "script_match");
   ros::NodeHandle n;
 
@@ -44,14 +45,32 @@ int main(int argc, char** argv)
 
   ros::Subscriber sub = n.subscribe("odom", 1000, odo_callback);
 
-  move_xy(client, 0.5, 0);
-  while(!((x_odo > 0.49 || x_odo < 0.51) && (y_odo > -0.01 || y_odo < 0.01)));
-  move_xy(client, 0.5, 0.5);
-  while(!((x_odo > 0.49 || x_odo < 0.51) && (y_odo > 0.49 || y_odo < 0.51)));
-  move_xy(client, 0, 0.5);
-  while(!((x_odo > -0.01|| x_odo < 0.01) && (y_odo > 0.49 || y_odo < 0.51)));
-  move_xy(client, 0, 0);
-  while(!((x_odo > -0.01|| x_odo < 0.01) && (y_odo > -0.01 || y_odo < 0.01)));
+  ros::Rate r(5);
+
+  while(n.ok())
+  {
+    switch(state)
+    {
+    case 0:
+      move_xy(client, 0.5, 0);
+      state++;
+      break;
+    case 1:
+      if((x_odo > 0.49 || x_odo < 0.51) && (y_odo > -0.01 || y_odo < 0.01))
+        state++;
+      break;
+    case 2:
+      move_xy(client, 0, 0);
+      state++;
+      break;
+    case 3:
+      if((x_odo > -0.1 || x_odo < 0.1) && (y_odo > -0.1 || y_odo < 0.1))
+        state++;
+      break;
+    }
+
+    r.sleep();
+  }
 
   return 0;
 }
