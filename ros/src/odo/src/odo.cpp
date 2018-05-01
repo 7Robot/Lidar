@@ -55,7 +55,7 @@ int main(int argc, char** argv)
       string data(str.begin(), end);
       stringstream ss(data);
       ss >> x >> trash >> y >> trash >> th >> trash >> v >> trash >> vth;
-      cout << x << ' ' << y << ' ' << th << std::endl;
+      //cout << x << ' ' << y << ' ' << th << std::endl;
     }
     else
     {

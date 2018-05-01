@@ -36,7 +36,23 @@ void move_xy(ros::ServiceClient client, float x, float y)
   string str;
   stringstream ss;
   //Action a réaliser sur le pic
-  ss << "MOVE " << x << " " << y << endl;
+  ss << "MOVESEG " << x << " " << y << endl;
+  srv.request.command = ss.str();
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+void angle(ros::ServiceClient client, float theta)
+{
+  comm::Comm srv;
+  string str;
+  stringstream ss;
+  //Action a réaliser sur le pic
+  ss << "ANGLE " << theta << endl;
   srv.request.command = ss.str();
 
   if(client.call(srv))
@@ -54,15 +70,15 @@ void script_callback(const ros::TimerEvent& trash)
   switch(state)
   {
     case 0:
-      move_xy(_client, 0.5, 0);
+      move_xy(_client, 0.885, 0);
       state++;
       break;
     case 1:
-      if((x_odo > 0.4 && x_odo < 0.6) && (y_odo > -0.1 && y_odo < 0.1))
+      if((x_odo > 0.83 && x_odo < 0.93) && (y_odo > -0.1 && y_odo < 0.1))
         state++;
       break;
     case 2:
-      move_xy(_client, 0, 0);
+      angle(_client, 1.571);
       state++;
       break;
     case 3:
@@ -74,8 +90,14 @@ void script_callback(const ros::TimerEvent& trash)
       }
       break;
     case 4:
-      if((x_odo > -0.1 && x_odo < 0.1) && (y_odo > -0.1 && y_odo < 0.1))
+      move_xy(_client, 0.885, -0.03);
+      break;
+    case 5:
+      if((x_odo > 0.83 && x_odo < 0.93) && (y_odo > -0.1 && y_odo < 0))
         state++;
+      break;
+    case 6:
+      angle(_client, 0);
       break;
   }
   std::cout << state << std::endl;
