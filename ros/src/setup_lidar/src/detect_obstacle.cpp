@@ -104,6 +104,7 @@ public:
     bool obstacle = false;
     bool p_obstacle = false;
 
+    std::cout << "checking obstacle" << std::endl;
     for(int i = 319; i < 502; i += 2)
     {
       angle += 2 * scan_in->angle_increment;
@@ -111,6 +112,7 @@ public:
       if(scan_in->ranges[i] < 0.15)
       {
         obstacle = true;
+	std::cout << "obstacle " << i << std::endl;
       }
 
     }

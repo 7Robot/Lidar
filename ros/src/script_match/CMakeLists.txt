@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(setup_lidar)
+project(script_match)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
