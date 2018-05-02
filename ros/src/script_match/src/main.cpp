@@ -11,7 +11,7 @@ float x_odo = 0;
 float y_odo = 0;
 float theta_odo = 0;
 
-ros::ServiceClient _client; 
+ros::ServiceClient _client;
 
 
 void odo_callback(const nav_msgs::Odometry::ConstPtr& odom_in)
@@ -66,7 +66,7 @@ void script_callback(const ros::TimerEvent& trash)
 {
   static int state = 0;
   static int tempo = 0;
-  
+
   switch(state)
   {
     case 0:
@@ -81,16 +81,17 @@ void script_callback(const ros::TimerEvent& trash)
       angle(_client, 1.571);
       state++;
       break;
-    case 3:
+    case 3: //Activation interrupteur
       tempo++;
-      if(tempo > 50)
+      if(tempo > 40)
       {
         state++;
-	tempo = 0;
+        tempo = 0;
       }
       break;
     case 4:
       move_xy(_client, 0.885, -0.03);
+      state++;
       break;
     case 5:
       if((x_odo > 0.83 && x_odo < 0.93) && (y_odo > -0.1 && y_odo < 0))
@@ -98,10 +99,1497 @@ void script_callback(const ros::TimerEvent& trash)
       break;
     case 6:
       angle(_client, 0);
+      state++;
       break;
+    case 7:
+      move_xy(_client, 1.26, -0.03);
+      state++;
+      break;
+    case 8:
+      if((x_odo > 1.31 && x_odo < 1.21) && (y_odo > -0.1 && y_odo < 0))
+        state++;
+      break;
+    case 9: //Lecture capteur 1
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 10:
+      move_xy(_client, 1.34, -0.03);
+      state++;
+      break;
+    case 11:
+      if((x_odo > 1.39 && x_odo < 1.29) && (y_odo > -0.1 && y_odo < 0))
+        state++;
+      break;
+    case 12: //Lecture capteur 2
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 13:
+      move_xy(_client, 1.41, -0.03);
+      state++;
+      break;
+    case 14:
+      if((x_odo > 1.46 && x_odo < 1.36) && (y_odo > -0.1 && y_odo < 0))
+        state++;
+      break;
+    case 15: //Lecture capteur 3
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 16:
+      angle(_client,0.916);
+      state++;
+      break;
+    case 17:
+      move_xy(_client,0.18,-1.57);
+      state++;
+      break;
+    case 18:
+      if((x_odo > 0.13 && x_odo < 0.23) && (y_odo > -1.62 && y_odo < -1.52))
+        state++;
+      break;
+    case 19:
+      angle(_client, 0);
+      state++;
+      break;
+    case 20:
+      move_xy(_client,0,-1.57);
+      state++;
+      break;
+    case 21:
+      if((x_odo > 0.05 && x_odo < -0.05) && (y_odo > -1.62 && y_odo < -1.52))
+        state++;
+      break;
+    case 22:
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 23:
+      move_xy(_client,0.18,-1.57);
+      state++;
+      break;
+    case 24:
+      if((x_odo > 0.13 && x_odo < 0.23) && (y_odo > -1.62 && y_odo < -1.52))
+        state++;
+      break;
+    case 25:
+      angle(_client,1.05);
+      state++;
+      break;
+    case 26:
+      move_xy(_client,0.64,-0.6);
+      state++;
+      break;
+    case 27:
+      if((x_odo > 0.69 && x_odo < 0.59) && (y_odo > -0.65 && y_odo < -0.55))
+        state++;
+      break;
+    case 28:
+      angle(_client,1.571);
+      state++;
+      break;
+    case 29:
+      move_xy(_client,0.64,-0.5);
+      state++;
+      break;
+    case 30:
+      if((x_odo > 0.69 && x_odo < 0.59) && (y_odo > -0.55 && y_odo < -0.45))
+        state++;
+      break;
+    case 31: //Prise des cubes
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    /*
+    case 32:
+      move_xy(_client,0.60,-0.03);
+      state++;
+      break;
+    case 33:
+      if((x_odo > 0.65 && x_odo < 0.55) && (y_odo > -0.08 && y_odo < 0.0))
+        state++;
+      break;
+    case 34:
+      angle(_client,1.571);
+      state++;
+      break;
+    case 35:
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 36:
+      move_xy(_client,0.60,-0.2);
+      state++;
+      break;
+    case 37:
+      if((x_odo > 0.65 && x_odo < 0.55) && (y_odo > -0.15 && y_odo < -0.25))
+        state++;
+      break;
+    case 38:
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 39:
+      angle(_client,-1.95);
+      state++;
+      break;
+    case 40:
+      move_xy(_client,0.38,-0.95);
+      state++;
+      break;
+    case 41:
+      if((x_odo > 0.43 && x_odo < 0.33) && (y_odo > -1.0 && y_odo < -0.90))
+        state++;
+      break;
+    case 42:
+      angle(_client,-3,14);
+      state++;
+      break;
+    case 43:
+      move_xy(_client,0.31,-0.95);
+      state++;
+      break;
+    case 44:
+      if((x_odo > 0.26 && x_odo < 0.36) && (y_odo > -1.0 && y_odo < -0.90))
+        state++;
+      break;
+    case 45: //Prise des cubes
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 46:
+      angle(_client,1.57);
+      state++;
+      break;
+    case 47:
+      move_xy(_client,0.31,-0.03);
+      state++;
+      break;
+    case 48:
+      if((x_odo > 0.26 && x_odo < 0.36) && (y_odo > -0.08 && y_odo < 0.0))
+        state++;
+      break;
+    case 49: //Ouvrir porte (déposer les cubes)
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 50:
+      move_xy(_client,0.31,-0.2);
+      state++;
+      break;
+    case 51:
+      if((x_odo > 0.26 && x_odo < 0.36) && (y_odo > -0.25 && y_odo < -0.15))
+        state++;
+      break;
+    case 52: //Fermer porte
+      tempo++;
+      if(tempo > 40)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    */
   }
   std::cout << state << std::endl;
 }
+/*
+bool move_orangeBleu()
+{
+  static int state = 0;
+  static int tempo = 0;
+  bool fin = false;
+
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  switch(state)
+  {
+    case 0:
+      move_xy(_client, x_init + 0.1, y_init );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x_init - 0.05 && x_odo < 0,15) && (y_odo > y_init - 0.05 && y_odo < y_init + 0.05))
+        state++;
+      break;
+    case 2:
+      angle(_client, theta_init + 1.571);
+      state++;
+      break;
+    case 3:
+      move_xy(_client, x_init + 0.1, y_init - delta1 - 0.1 );
+      state++;
+      break;
+    case 4:
+      if((x_odo > x_init + 0.05 && x_odo < 0,15) && (y_odo > y_init - delta1 - 0.15 && y_odo < y_init - delta1 - 0.05))
+        state++;
+      break;
+    case 5:
+      angle(_client, theta_init);
+      state++;
+      break;
+    case 6:
+      move_xy(_client, x_init - delta2 , y_init - delta1 - 0.1 );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x_init - delta2 - 0.05 && x_odo < x_init - delta2 + 0.05) && (y_odo > y_init - delta1 - 0.15 && y_odo < y_init - delta1 - 0.05))
+        state++;
+      break;
+    case 8:
+      angle(_client, theta_init - 1.571);
+      state++;
+      break;
+    case 9:
+      move_xy(_client, x_init - delta2, y_init - delta1);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x_init - delta2 - 0.05 && x_odo < x_init - delta2 + 0.05) && (y_odo > y_init - delta1 - 0.05 && y_odo < y_init - delta1 + 0.05))
+        state++;
+      break;
+    case 11:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state = 0;
+        tempo = 0;
+        fin = true;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+
+  return fin;
+}
+
+void script_callback_Vert_Noir(const ros::TimerEvent& trash)
+{
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  static int state = 0;
+  static int tempo = 0;
+
+  switch(state)
+  {
+    case 0:
+      x=x_init-0.1;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      y=y_init+delta1+0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      x=x_init+delta2;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init-1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      y=y_init+delta1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Bleu_Vert(const ros::TimerEvent& trash)
+{
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  static int state = 0;
+  static int tempo = 0;
+
+  switch(state)
+  {
+    case 0:
+      x=x_init;
+      y=y_init-0.1;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      x=x_init-delta1-0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      y=y_init+delta2;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init-1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      x=x_init-delta1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Noir_Orange(const ros::TimerEvent& trash)
+{
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  static int state = 0;
+  static int tempo = 0;
+
+  switch(state)
+  {
+    case 0:
+      x=x_init;
+      y=y_init+0.1;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      x=x_init+delta1+0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      y=y_init+delta2;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init-1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      x=x_init+delta1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Orange_Vert(const ros::TimerEvent& trash)
+{
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  static int state = 0;
+  static int tempo = 0;
+
+  switch(state)
+  {
+    case 0:
+      x=x_init+0.1;
+      y=y_init;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      y=y_init-delta1-0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      x=x_init-2*delta2-0.1;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init-1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      y=y_init;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+      theta=theta_init-3.142;
+      angle(_client, theta);
+      state++;
+    case 12:
+      x=x_init-2*delta2;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 13:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 14:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Bleu_Noir(const ros::TimerEvent& trash)
+{
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  static int state = 0;
+  static int tempo = 0;
+
+  switch(state)
+  {
+    case 0:
+      x=x_init;
+      y=y_init-0.1;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init-1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      x=x_init+delta2+0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      y=y_init+2*delta1+0.1;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      x=x_init;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+        theta=theta_init+3.142;
+        angle(_client, theta);
+        state++;
+        break;
+    case 12:
+        y=y_init+2*delta1;
+        move_xy(_client, x, y);
+        state++;
+        break;
+    case 13:
+        if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+          state++;
+        break;
+    case 14:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Orange_Jaune(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+
+  float x;
+  float y;
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  move_orangeBleu();
+
+  switch(state)
+  {
+    case 0:
+      x=x_init-0.54;
+      y=y_init;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+    //fonction attraper cube
+    tempo++;
+    if(tempo > 50)
+    {
+      state++;
+      tempo = 0;
+    }
+  break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Bleu_Jaune(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+  float x;
+  float y;
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  script_callback_Bleu_Orange(trash);// à modifier?
+
+  switch(state)
+  {
+    case 0:
+      x=x_init+0.54;
+      y=y_init;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0.05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+    //fonction attraper cube
+    tempo++;
+    if(tempo > 50)
+    {
+      state++;
+      tempo = 0;
+    }
+  break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Jaune_Vert(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+  float x;
+  float y;
+  switch(state)
+  {
+    case 0:
+      x=x_init-0,54;
+      y=y_init;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+    //fonction attraper cube
+    tempo++;
+    if(tempo > 50)
+    {
+      state++;
+      tempo = 0;
+    }
+  break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Jaune_Noir(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+  float x;
+  float y;
+
+  switch(state)
+  {
+    case 0:
+      x=x_init;
+      y=y_init+0.54;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+    //fonction attraper cube
+    tempo++;
+    if(tempo > 50)
+    {
+      state++;
+      tempo = 0;
+    }
+  break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Noir_Jaune(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+  script_callback_Noir_Orange(trash);// à modifier?
+  float x;
+  float y;
+
+  switch(state)
+  {
+    case 0:
+      x=x_init-0.54;
+      y=y_init;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0.05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+    //fonction attraper cube
+    tempo++;
+    if(tempo > 50)
+    {
+      state++;
+      tempo = 0;
+    }
+  break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Bleu_Orange(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+  switch(state)
+  {
+    case 0:
+      x=x_init;
+      y=y_init-0.1;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      x=x_init+delta2-0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init+3,142;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      y=y_init+delta1;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      x=x_init+delta2;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Vert_Bleu(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  switch(state)
+  {
+    case 0:
+      x=x_init-0.1;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      y=y_init-delta2+0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init+3.142;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      x=x_init+delta1;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      y=y_init-delta2;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Noir_Vert(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  switch(state)
+  {
+    case 0:
+      x=x_init;
+      y=y_init+0.1;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0.05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      x=x_init-delta2-0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init+3.142;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      y=y_init-delta1;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      x=x_init-delta2
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Vert_Orange(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  switch(state)
+  {
+    case 0:
+      x=x_init-0.1;
+      y=y_init;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0.05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init-1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      y=y_init-delta1-0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      x=x_init+2*delta2+0.1;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      y=y_init;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+        theta=theta_init+3.142;
+        angle(_client, theta);
+        state++;
+        break;
+    case 12:
+        x=x_init+2*delta2;
+        move_xy(_client, x, y);
+        state++;
+        break;
+    case 13:
+        if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+          state++;
+        break;
+    case 14:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Noir_Bleu(const ros::TimerEvent& trash)
+{
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  static int state = 0;
+  static int tempo = 0;
+
+  switch(state)
+  {
+    case 0:
+      x=x_init;
+      y=y_init+0.1;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0.05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init-1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      x=x_init+delta2+0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init-3.142;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      y=y_init-2*delta1-0.2;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init-4.713;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      x=x_init;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+      theta=theta_init-3.142;
+      angle(_client, theta);
+      state++;
+      break;
+    case 12:
+      y=y_init-2*delta1-0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 13:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 14:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout << state << std::endl;
+}
+
+void script_callback_Orange_Noir(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+
+  float x_init=x_odo;// à changer en fonction de l'emplacement où nous sommes
+  float y_init=y_odo;
+  float theta_init=0;
+
+  float x=0;
+  float y=0;
+  float theta=0;
+
+  float delta1 = 22; // à changer si avant ou arrière
+  float delta2 = 18.3; // à changer si avant ou arrière
+
+  switch(state)
+  {
+    case 0:
+      x=x_init+0.1;
+      y=y_init;
+      move_xy(_client, x, y );
+      state++;
+      break;
+    case 1:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 2:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 3:
+      y=y_init-delta2+0.1;
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 4:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 5:
+      theta=theta_init+3.142;
+      angle(_client, theta);
+      state++;
+      break;
+    case 6:
+      x=x_init-delta1;
+      move_xy(_client, x , y );
+      state++;
+      break;
+    case 7:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 8:
+      theta=theta_init+1.571;
+      angle(_client, theta);
+      state++;
+      break;
+    case 9:
+      y=y_init-delta1
+      move_xy(_client, x, y);
+      state++;
+      break;
+    case 10:
+      if((x_odo > x - 0.05 && x_odo < x + 0,05) && (y_odo > y - 0.05 && y_odo < y + 0.05))
+        state++;
+      break;
+    case 11:
+      //fonction attraper cube
+      tempo++;
+      if(tempo > 50)
+      {
+        state++;
+        tempo = 0;
+      }
+    break;
+  }
+  std::cout <<
+  state << std::endl;
+}
+
+void script_callback_Random_Spot_C(const ros::TimerEvent& trash)
+{
+  move_orangeBleu(trash);
+  script_callback_Orange_Noir(trash);
+  script_callback_Noir_Jaune(trash);
+}
+
+void script_callback_Seq1_Spot_C(const ros::TimerEvent& trash)
+{
+  script_callback_Noir_Orange(trash);
+  move_orangeBleu(trash);
+  script_callback_Bleu_Jaune(trash);
+}
+
+void script_callback_Seq2_Spot_C(const ros::TimerEvent& trash)
+{
+  script_callback_Noir_Bleu(trash);
+  script_callback_Bleu_Orange(trash);
+  script_callback_Orange_Jaune(trash);
+}
+
+void script_callback_Seq7_Spot_C(const ros::TimerEvent& trash)
+{
+  // avoir pensé à poser le Golden cube pendant le match
+  script_callback_Bleu_Orange(trash);
+  script_callback_Orange_Noir(trash);
+  script_callback_Noir_Jaune(trash);
+  script_callback_Jaune_Vert(trash);
+}
+
+void script_callback_Seq9_Spot_C(const ros::TimerEvent& trash)
+{
+  script_callback_Bleu_Noir(trash);
+  script_callback_Noir_Orange(trash);
+  script_callback_Orange_Jaune(trash);
+}*/
 
 int main(int argc, char** argv)
 {
@@ -114,50 +1602,7 @@ int main(int argc, char** argv)
   //ros::Rate r(5);
   ros::Timer timer = n.createTimer(ros::Duration(0.2), script_callback);
 
-  /*while(n.ok())
-  {
-    switch(state)
-    {
-    case 0:
-      move_xy(client, 0.5, 0);
-      state++;
-      break;
-    case 1:
-      if((x_odo > 0.49 && x_odo < 0.51) && (y_odo > -0.01 && y_odo < 0.01))
-        state++;
-      break;
-    case 2:
-      move_xy(client, 0, 0);
-      state++;
-      break;
-    case 3:
-      if((x_odo > -0.1 && x_odo < 0.1) && (y_odo > -0.1 && y_odo < 0.1))
-        state++;
-      break;
-    }
-
-    r.sleep();
-    //std::cout << x_odo << " " << y_odo << std::endl; 
-  }*/
-
   ros::spin();
 
   return 0;
 }
-
-/*void foo(ros::ServiceClient client, autres params)
-{
-  comm::Comm srv;
-  string str;
-  //Action a réaliser sur le pic
-  str = "MY_CMD\n";
-  //Ajout des param éventuelles
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}*/
