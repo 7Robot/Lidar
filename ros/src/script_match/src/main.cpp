@@ -227,7 +227,7 @@ void script_callback(const ros::TimerEvent& trash)
       state++;
       break;
     case 33:
-      if((x_odo > 0.65 && x_odo < 0.55) && (y_odo > -0.08 && y_odo < 0.0))
+      if((x_odo < 0.65 && x_odo > 0.55) && (y_odo > -0.08 && y_odo < 0.0))
         state++;
       break;
     case 34:
@@ -247,7 +247,7 @@ void script_callback(const ros::TimerEvent& trash)
       state++;
       break;
     case 37:
-      if((x_odo > 0.65 && x_odo < 0.55) && (y_odo > -0.15 && y_odo < -0.25))
+      if((x_odo < 0.65 && x_odo > 0.55) && (y_odo < -0.15 && y_odo > -0.25))
         state++;
       break;
     case 38:
@@ -267,7 +267,7 @@ void script_callback(const ros::TimerEvent& trash)
       state++;
       break;
     case 41:
-      if((x_odo > 0.43 && x_odo < 0.33) && (y_odo > -1.0 && y_odo < -0.90))
+      if((x_odo < 0.43 && x_odo > 0.33) && (y_odo > -1.0 && y_odo < -0.90))
         state++;
       break;
     case 42:
@@ -322,7 +322,7 @@ void script_callback(const ros::TimerEvent& trash)
       tempo++;
       if(tempo > 40)
       {
-        state++;
+        state = 0;
         tempo = 0;
       }
       break;
@@ -1603,39 +1603,103 @@ bool move_orangeNoir()
 
 void move_randomSpotC()
 {
-  move_orangeBleu();
-  move_orangeNoir();
-  move_noirJaune();
+  static int state = 0;
+
+  switch (state) {
+    case 0:
+      if(move_orangeBleu())
+        state++;
+      break;
+    case 1:
+      if(move_orangeNoir())
+        state++;
+      break;
+    case 2:
+      if(move_noirJaune())
+        state = 0;
+      break;
+  }
 }
 
 void move_seq1SpotC()
 {
-  move_noirOrange();
-  move_orangeBleu();
-  move_bleuJaune();
+  static int state = 0;
+
+  switch (state) {
+    case 0:
+      if(move_noirOrange())
+        state++;
+      break;
+    case 1:
+      if(move_orangeBleu())
+        state++;
+      break;
+    case 2:
+      if(move_bleuJaune())
+        state = 0;
+      break;
+  }
 }
 
 void move_seq2SpotC()
 {
-  move_noirBleu();
-  move_bleuOrange();
-  move_orangeJaune();
+  static int state = 0;
+
+  switch (state) {
+    case 0:
+      if(move_noirBleu())
+        state++;
+      break;
+    case 1:
+      if(move_bleuOrange())
+        state++;
+      break;
+    case 2:
+      if(move_orangeJaune())
+        state = 0;
+      break;
+  }
 }
 
 void move_seq7SpotC()
 {
   // avoir pensé à poser le Golden cube pendant le match
-  move_bleuOrange();
-  move_orangeNoir();
-  move_noirJaune();
-  move_jauneVert();
+  static int state = 0;
+
+  switch (state) {
+    case 0:
+      if(move_bleuOrange())
+        state++;
+      break;
+    case 1:
+      if(move_orangeNoir())
+        state++;
+      break;
+    case 2:
+      if(move_noirJaune())
+        state = 0;
+      break;
+  }
 }
 
 void move_seq9SpotC()
 {
-  move_bleuNoir();
-  move_noirOrange();
-  move_orangeJaune();
+  static int state = 0;
+
+  switch (state) {
+    case 0:
+      if(move_bleuNoir())
+        state++;
+      break;
+    case 1:
+      if(move_noirOrange())
+        state++;
+      break;
+    case 2:
+      if(move_orangeJaune())
+        state = 0;
+      break;
+  }
 }
 
 int main(int argc, char** argv)

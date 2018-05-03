@@ -22,8 +22,11 @@ include_directories(
 
 ## Declare a C++ executable
 add_executable(script_match src/main.cpp)
+add_executable(script_match_pr src/main_pr.cpp)
 
 add_dependencies(script_match comm_generate_messages_cpp)
+add_dependencies(script_match_pr comm_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 target_link_libraries(script_match ${catkin_LIBRARIES})
+target_link_libraries(script_match_pr ${catkin_LIBRARIES})
