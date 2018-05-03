@@ -27,7 +27,7 @@ void odo_callback(const nav_msgs::Odometry::ConstPtr& odom_in)
   double trash;
   m.getRPY(trash, trash, theta);
   theta_odo = theta;
-  std::cout << x_odo << " " << y_odo << endl;
+  //std::cout << x_odo << " " << y_odo << endl;
 }
 
 void move_xy(ros::ServiceClient client, float x, float y)
@@ -69,10 +69,12 @@ void script_callback(const ros::TimerEvent& trash)
 
   switch(state)
   {
+    //Depart
     case 0:
       move_xy(_client, 0.885, 0);
       state++;
       break;
+    //Devant l'interrupteur
     case 1:
       if((x_odo > 0.83 && x_odo < 0.93) && (y_odo > -0.1 && y_odo < 0.1))
         state++;
@@ -81,139 +83,157 @@ void script_callback(const ros::TimerEvent& trash)
       angle(_client, 1.571);
       state++;
       break;
-    case 3: //Activation interrupteur
+    case 3:
       tempo++;
-      if(tempo > 40)
+      if(tempo > 20)
       {
         state++;
         tempo = 0;
       }
       break;
     case 4:
+      //check activation fini
+      state++;
+      break;
+    //Recul
+    case 5:
       move_xy(_client, 0.885, -0.03);
       state++;
       break;
-    case 5:
+    case 6:
       if((x_odo > 0.83 && x_odo < 0.93) && (y_odo > -0.1 && y_odo < 0))
         state++;
       break;
-    case 6:
+    case 7:
       angle(_client, 0);
       state++;
       break;
-    case 7:
+    case 8:
       move_xy(_client, 1.26, -0.03);
       state++;
       break;
-    case 8:
+    case 9:
       if((x_odo < 1.31 && x_odo > 1.21) && (y_odo > -0.1 && y_odo < 0))
         state++;
       break;
-    case 9: //Lecture capteur 1
+    case 10:
+      angle(_client, 0);
+      state++;
+      break;
+    case 11: //Lecture capteur 1
       tempo++;
-      if(tempo > 40)
+      if(tempo > 20)
       {
         state++;
         tempo = 0;
       }
       break;
-    case 10:
+    case 12:
       move_xy(_client, 1.34, -0.03);
       state++;
       break;
-    case 11:
+    case 13:
       if((x_odo < 1.39 && x_odo > 1.29) && (y_odo > -0.1 && y_odo < 0))
         state++;
       break;
-    case 12: //Lecture capteur 2
-      tempo++;
-      if(tempo > 40)
-      {
-        state++;
-        tempo = 0;
-      }
-      break;
-    case 13:
-      move_xy(_client, 1.41, -0.03);
-      state++;
-      break;
     case 14:
-      if((x_odo < 1.46 && x_odo > 1.36) && (y_odo > -0.1 && y_odo < 0))
+        angle(_client, 0);
         state++;
-      break;
-    case 15: //Lecture capteur 3
+        break;
+    case 15: //Lecture capteur 2
       tempo++;
-      if(tempo > 40)
+      if(tempo > 20)
       {
         state++;
         tempo = 0;
       }
       break;
     case 16:
-      angle(_client,0.916);
+      move_xy(_client, 1.41, -0.03);
       state++;
       break;
     case 17:
-      move_xy(_client,0.18,-1.57);
-      state++;
+      if((x_odo < 1.46 && x_odo > 1.36) && (y_odo > -0.1 && y_odo < 0))
+        state++;
       break;
     case 18:
-      if((x_odo > 0.13 && x_odo < 0.23) && (y_odo > -1.62 && y_odo < -1.52))
+        angle(_client, 0);
         state++;
-      break;
-    case 19:
-      angle(_client, 0);
-      state++;
-      break;
-    case 20:
-      move_xy(_client,0,-1.57);
-      state++;
-      break;
-    case 21:
-      if((x_odo > 0.05 && x_odo < -0.05) && (y_odo > -1.62 && y_odo < -1.52))
-        state++;
-      break;
-    case 22:
+        break;
+    case 19: //Lecture capteur 3
       tempo++;
-      if(tempo > 40)
+      if(tempo > 20)
       {
         state++;
         tempo = 0;
       }
       break;
-    case 23:
+    //ATTENTION!!
+    case 20:
+      angle(_client,0.916);
+      state++;
+      break;
+    case 21:
       move_xy(_client,0.18,-1.57);
       state++;
       break;
-    case 24:
+    case 22:
       if((x_odo > 0.13 && x_odo < 0.23) && (y_odo > -1.62 && y_odo < -1.52))
         state++;
       break;
+    case 23:
+      angle(_client, 0);
+      state++;
+      break;
+    case 24:
+      move_xy(_client,0,-1.57);
+      state++;
+      break;
     case 25:
+      if((x_odo > 0.05 && x_odo < -0.05) && (y_odo > -1.62 && y_odo < -1.52))
+        state++;
+      break;
+    case 26:
+      tempo++;
+      if(tempo > 20)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 27:
+      move_xy(_client,0.18,-1.57);
+      state++;
+      break;
+    case 28:
+      if((x_odo > 0.13 && x_odo < 0.23) && (y_odo > -1.62 && y_odo < -1.52))
+        state++;
+      break;
+    case 29:
       angle(_client,1.05);
       state++;
       break;
-    case 26:
+    case 30:
       move_xy(_client,0.64,-0.6);
       state++;
       break;
-    case 27:
+    case 31:
       if((x_odo < 0.69 && x_odo > 0.59) && (y_odo > -0.65 && y_odo < -0.55))
         state++;
       break;
-    case 28:
+    case 32:
       angle(_client,1.571);
       state++;
       break;
-    case 29:
+    case 33:
       move_xy(_client,0.64,-0.5);
       state++;
       break;
-    case 30:
+    case 34:
       if((x_odo < 0.69 && x_odo > 0.59) && (y_odo > -0.55 && y_odo < -0.45))
         state++;
       break;
-    case 31: //Prise des cubes
+    case 35: //Prise des cubes
       tempo++;
       if(tempo > 40)
       {
