@@ -1,0 +1,1 @@
+Le script lecture_par_capteur ne marche qu'avec la bibliotèque installé
