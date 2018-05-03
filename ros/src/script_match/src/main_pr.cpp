@@ -5,6 +5,8 @@
 #include <string>
 #include "comm/Comm.h"
 
+#define pi 3.142
+
 using namespace std;
 
 float x_odo = 0;
@@ -81,18 +83,22 @@ void script_callback(const ros::TimerEvent& trash)
 			state++;
 			break;
 		case 3:
+      if(theta_odo > -2.38 && theta_odo < -2.34)
+        state++;
+      break;
+    case 4:
 			move_xy(_client, 0, -0.235);
 			state++;
 			break;
-		case 4:
+		case 5:
 			if((x_odo > -0.05 && x_odo < 0.05) && (y_odo > -0.285 && y_odo < -0.185))
     		state++;
 			break;
-		case 5:
+		case 6:
  			angle(_client, -2.36);
 			state++;
 			break;
-		case 6: //ramasse les balles de la bonne couleur
+		case 7: //ramasse les balles de la bonne couleur
 			tempo++;
 			if(tempo > 40)
 			{
@@ -100,31 +106,32 @@ void script_callback(const ros::TimerEvent& trash)
   			tempo = 0;
 			}
 			break;
-		case 7:
+		case 8:
 			move_xy(_client, 0.1, -0.13);
 			state++;
 			break;
-		case 8:
-			if((x_odo > 0.05 && x_odo < 0.15) && (y_odo > -0.18 && y_odo < -0.08))
+		case 9:
+			if((x_odo > 0.01 && x_odo < 0.15) && (y_odo > -0.18 && y_odo < -0.08))
     		state++;
 			break;
-		case 9:
- 			angle(_client, 1.571);
-			state++;
-			break;
 		case 10:
-			move_xy(_client, 0.1, 0.05);
+ 			angle(_client, 1.571);
 			state++;
 			break;
 		case 11:
-			if((x_odo > 0.05 && x_odo < 0.15) && (y_odo > 0 && y_odo < 0.1))
-    		state++;
+			move_xy(_client, 0.1, 0.05);
+			state++;
 			break;
 		case 12:
+    // Blocked x=0.0883 y=-0.1419
+			if((x_odo > 0.05 && x_odo < 0.15) && (y_odo > 0 && y_odo < 0.15))
+    		state++;
+			break;
+		case 13:
  			angle(_client, 1.571);
 			state++;
 			break;
-		case 13: //envoie les balles dans la citerne
+		case 14: //envoie les balles dans la citerne
 			tempo++;
 			if(tempo > 40)
 			{
@@ -132,59 +139,59 @@ void script_callback(const ros::TimerEvent& trash)
   			tempo = 0;
 			}
 			break;
-		case 14:
+		case 15:
  			angle(_client, -0.786);
 			state++;
 			break;
-		case 15:
+		case 16:
 			move_xy(_client, 0.61, -0.56);
 			state++;
 			break;
-		case 16:
+		case 17:
 			if((x_odo > 0.56 && x_odo < 0.66) && (y_odo > -0.61 && y_odo < -0.51))
     		state++;
 			break;
-		case 17:
+		case 18:
  			angle(_client, 0);
 			state++;
 			break;
-		case 18:
+		case 19:
 			move_xy(_client, 2.14, -0.6);
 			state++;
 			break;
-		case 19:
+		case 20:
 			if((x_odo > 1.99 && x_odo < 2.19) && (y_odo > -0.65 && y_odo < -0.55))
     		state++;
 			break;
-		case 20:
+		case 21:
  			angle(_client, -0.838);
 			state++;
 			break;
-		case 21:
+		case 22:
 			move_xy(_client, 2.595, -1.14);
 			state++;
 			break;
-		case 22:
+		case 23:
 			if((x_odo > 2.545 && x_odo < 2.645) && (y_odo > -1.19 && y_odo < -1.09))
     		state++;
 			break;
-		case 23:
- 			angle(_client, -2.478);
-			state++;
-			break;
 		case 24:
-			move_xy(_client, 2.34, -1.34);
+ 			angle(_client, -2.478);
 			state++;
 			break;
 		case 25:
+			move_xy(_client, 2.34, -1.34);
+			state++;
+			break;
+		case 26:
 			if((x_odo > 2.29 && x_odo < 2.39) && (y_odo > -1.39 && y_odo < -1.29))
     		state++;
 			break;
-		case 26:
+		case 27:
  			angle(_client, -2.478);
 			state++;
 			break;
-		case 27: //ramasse les balles qui sont à trier
+		case 28: //ramasse les balles qui sont à trier
 			tempo++;
 			if(tempo > 40)
 			{
@@ -192,39 +199,39 @@ void script_callback(const ros::TimerEvent& trash)
   			tempo = 0;
 			}
 			break;
-		case 28:
+		case 29:
 			move_xy(_client, 2.595, -1.14);
 			state++;
 			break;
-		case 29:
+		case 30:
 			if((x_odo > 2.545 && x_odo < 2.645) && (y_odo > -1.19 && y_odo < -1.09))
     		state++;
 			break;
-		case 30:
+		case 31:
  			angle(_client, -3.648);
 			state++;
 			break;
-		case 31:
+		case 32:
 			move_xy(_client, 1.45, -0.52);
 			state++;
 			break;
-		case 32:
+		case 33:
 			if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -0.57 && y_odo < -0.47))
     		state++;
 			break;
-		case 33:
+		case 34:
  			angle(_client, 1.571);
 			state++;
 			break;
-		case 34:
+		case 35:
 			move_xy(_client, 1.45, -1.09);
 			state++;
 			break;
-		case 35:
+		case 36:
 			if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -1.14 && y_odo < -1.04))
     		state++;
 			break;
-		case 36: //dépose balles triées
+		case 37: //dépose balles triées
 			tempo++;
 			if(tempo > 40)
 			{
@@ -232,23 +239,23 @@ void script_callback(const ros::TimerEvent& trash)
   			tempo = 0;
 			}
 			break;
-		case 37:
+		case 38:
  			angle(_client, 2.443);
 			state++;
 			break;
-		case 38:
+		case 39:
 			move_xy(_client, 0.085, 0);
 			state++;
 			break;
-		case 39:
+		case 40:
 			if((x_odo > 0.035 && x_odo < 0.135) && (y_odo > -0.05 && y_odo < 0.05))
     		state++;
 			break;
-		case 40:
+		case 41:
  			angle(_client, 1.571);
 			state++;
 			break;
-		case 41: //Tire balles triées
+		case 42: //Tire balles triées
 			tempo++;
 			if(tempo > 40)
 			{
@@ -257,6 +264,10 @@ void script_callback(const ros::TimerEvent& trash)
 			}
 			break;
 	}
+  std::cout << x_odo << std::endl;
+  std::cout << y_odo << std::endl;
+  std::cout << theta_odo << std::endl;
+  std::cout << state << std::endl;
 }
 
 int main(int argc, char** argv)
