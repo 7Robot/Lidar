@@ -22,7 +22,7 @@ public:
   {
     if(!uart.isOpen())
     {
-      timeout = serial::Timeout::simpleTimeout(50);
+      timeout = serial::Timeout::simpleTimeout(100);
       uart.setPort(UART_PORT);
       uart.setBaudrate(57600);
       uart.setTimeout(timeout);
@@ -38,10 +38,13 @@ public:
   static bool interpret( comm::Comm::Request &req,
                   comm::Comm::Response &res)
   {
+    size_t nb_char;
     string str;
     uart.flush();
     uart.write(req.command);
-    str = uart.read(256);
+    nb_char = uart.available();
+    if(nb_char > 0)
+      uart.read(str, nb_char);
     res.answer = str;
 
     return true;

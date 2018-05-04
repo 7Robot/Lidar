@@ -2,22 +2,55 @@
 #include <nav_msgs/Odometry.h>
 #include <tf/LinearMath/Matrix3x3.h>
 #include <tf/LinearMath/Quaternion.h>
+
 #include <string>
+#include <cstdio>
+#include <cstring>
 #include "comm/Comm.h"
 
 #define pi 3.142
 
 using namespace std;
 
-float x_odo = 0;
+/*float x_odo = 0;
 float y_odo = 0;
-float theta_odo = 0;
+float theta_odo = 0;*/
 
 ros::ServiceClient _client;
 
-void odo_callback(const nav_msgs::Odometry::ConstPtr& odom_in)
+struct not_digit
 {
-  x_odo = odom_in->pose.pose.position.x;
+  bool operator()(const char c)
+  {
+    return c != ',' && !std::isdigit(c) && c != '-' && c != '.';
+  }
+};
+
+void get_odo(ros::ServiceClient client, float &x, float &y, float &theta)
+{
+  comm::Comm srv;
+  string str;
+  char trash;
+
+  not_digit not_a_digit;
+  std::string::iterator fin;
+
+  srv.request.command = "GETODO\n";
+
+  if(client.call(srv))
+  {
+    str = (string)srv.response.answer;
+    fin = std::remove_if(str.begin(), str.end(), not_a_digit);
+    string data(str.begin(), fin);
+    stringstream ss(data);
+    ss >> x >> trash >> y >> trash >> theta;
+    //cout << x << ' ' << y << ' ' << th << std::endl;
+  }
+  else
+  {
+    ROS_ERROR("Failed to call service pic_pi_comm");
+  }
+  /*x_odo = odom_in->pose.pose.position.x;
   y_odo = odom_in->pose.pose.position.y;
   tf::Quaternion q(odom_in->pose.pose.orientation.x,
                    odom_in->pose.pose.orientation.y,
@@ -28,7 +61,7 @@ void odo_callback(const nav_msgs::Odometry::ConstPtr& odom_in)
   double trash;
   m.getRPY(trash, trash, theta);
   theta_odo = theta;
-  std::cout << x_odo << " " << y_odo << endl;
+  //std::cout << x_odo << " " << y_odo << endl;*/
 }
 
 void move_xy(ros::ServiceClient client, float x, float y)
@@ -67,6 +100,15 @@ void script_callback(const ros::TimerEvent& trash)
 {
 	static int state = 0;
 	static int tempo = 0;
+
+  float x_odo = 0;
+  float y_odo = 0;
+  float theta_odo = 0;
+
+  ros::Time date;
+  date = ros::Time::now();
+
+  get_odo(_client, x_odo, y_odo, theta_odo);
 
   switch(state)
   {
@@ -264,10 +306,8 @@ void script_callback(const ros::TimerEvent& trash)
 			}
 			break;
 	}
-  std::cout << x_odo << std::endl;
-  std::cout << y_odo << std::endl;
-  std::cout << theta_odo << std::endl;
-  std::cout << state << std::endl;
+  std::cout << date.sec << " " << date.nsec << " " << x_odo << " " << y_odo << " " << theta_odo
+  << " " << state << std::endl;
 }
 
 int main(int argc, char** argv)
@@ -276,10 +316,10 @@ int main(int argc, char** argv)
   ros::NodeHandle n;
 
   _client = n.serviceClient<comm::Comm>("pic_pi_comm");
-  ros::Subscriber sub = n.subscribe("odom", 1000, odo_callback);
+  //ros::Subscriber sub = n.subscribe("odom", 1000, odo_callback);
 
   //ros::Rate r(5);
-  ros::Timer timer = n.createTimer(ros::Duration(0.2), script_callback);
+  ros::Timer timer = n.createTimer(ros::Duration(0.5), script_callback);
 
   ros::spin();
 

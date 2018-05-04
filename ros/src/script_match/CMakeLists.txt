@@ -21,7 +21,7 @@ include_directories(
 )
 
 ## Declare a C++ executable
-add_executable(script_match_gr src/main.cpp)
+add_executable(script_match_gr src/main_gr.cpp)
 add_executable(script_match_pr src/main_pr.cpp)
 
 add_dependencies(script_match_gr comm_generate_messages_cpp)
