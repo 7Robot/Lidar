@@ -102,6 +102,7 @@ bool check_Init_AX12(ros::ServiceClient client)
   return ok;
 }
 
+// Faire tomber les balles dans le canon
 void do_Ouvrir_Canon(ros::ServiceClient client)
 {
   comm::Comm srv;
@@ -139,6 +140,7 @@ bool check_Ouvrir_Canon(ros::ServiceClient client)
   return ok;
 }
 
+// Refermer pour lancer la turbine
 void do_Fermer_Canon(ros::ServiceClient client)
 {
   comm::Comm srv;
@@ -176,6 +178,83 @@ bool check_Fermer_Canon(ros::ServiceClient client)
   return ok;
 }
 
+// Ouvrir trappe
+void do_ouvrirTrappe(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "OUVRIRTRAPPE\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_ouvrirTrappe(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVEROUVRIRTRAPPE\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+// Fermer trappe
+void do_fermerTrappe(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "FERMERTRAPPE\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_fermerTrape(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVERFERMERTRAPPE\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+// Bras de tri
 void do_Tomber_Balle(ros::ServiceClient client)
 {
   comm::Comm srv;
@@ -213,6 +292,7 @@ bool check_Tomber_Balle(ros::ServiceClient client)
   return ok;
 }
 
+// Emmène une balle vers turbine
 void do_Balle_Turbine(ros::ServiceClient client)
 {
   comm::Comm srv;
@@ -250,6 +330,7 @@ bool check_Balle_Turbine(ros::ServiceClient client)
   return ok;
 }
 
+// Emène une balle vers la trappe
 void do_Balle_Trappe(ros::ServiceClient client)
 {
   comm::Comm srv;
@@ -287,6 +368,7 @@ bool check_Balle_Trappe(ros::ServiceClient client)
   return ok;
 }
 
+// Récuperer toutes les balles
 void do_Tri_Canon(ros::ServiceClient client)
 {
   comm::Comm srv;
@@ -324,6 +406,7 @@ bool check_Tri_Canon(ros::ServiceClient client)
   return ok;
 }
 
+// Récupérer une vers la turbine, une vers la déchetterie
 void do_Tri_Alt(ros::ServiceClient client)
 {
   comm::Comm srv;
@@ -440,170 +523,237 @@ void script_callback(const ros::TimerEvent& trash)
 			state++;
 			break;
 		case 7: //ramasse les balles de la bonne couleur
-			tempo++;
-			if(tempo > 10 )
-			{
-  			state++;
-  			tempo = 0;
-			}
-			break;
-		case 8:
+      //do_Tri_Canon(_client);
+      state++;
+      break;
+    case 8:
+      //if(check_Tri_Canon(_client))
+      state++;
+      break;
+		case 9:
 			move_xy(_client, 0.1, -0.13);
 			state++;
 			break;
-		case 9:
+		case 10:
 			if((x_odo > 0.01 && x_odo < 0.15) && (y_odo > -0.18 && y_odo < -0.08))
     		state++;
 			break;
-		case 10:
- 			angle(_client, 1.571);
-			state++;
-			break;
 		case 11:
-			move_xy(_client, 0.1, 0.05);
+ 			angle(_client, 1.571);
 			state++;
 			break;
 		case 12:
-    // Blocked x=0.0883 y=-0.1419
+			move_xy(_client, 0.1, 0.05);
+			state++;
+			break;
+		case 13:
 			if((x_odo > 0.05 && x_odo < 0.15) && (y_odo > 0 && y_odo < 0.15))
     		state++;
 			break;
-		case 13:
+		case 14:
  			angle(_client, 1.571);
 			state++;
 			break;
-		case 14: //envoie les balles dans la citerne
-			tempo++;
-			if(tempo > 40)
-			{
-  			state++;
-  			tempo = 0;
-			}
+		case 15: //envoie les balles dans la citerne
+      // Launch turbine
+      //state++;
+      state++;
 			break;
-		case 15:
+    case 16:
+      // if(check_turbine_on)
+      // OUVRIRCANON
+      state++;
+      break;
+    case 17:
+      // Tempo
+      tempo++;
+      if(tempo > 20)
+      {
+        state++;
+        tempo = 0;
+      }
+      break;
+    case 18:
+      // Stop turbine
+      // if(check_turbine_off)
+      state++;
+      break;
+    case 19:
+      // FERMERCANON
+      // if(check_Fermer_Canon(_client))
+      state++;
+      break;
+		case 20:
  			angle(_client, -0.786);
 			state++;
 			break;
-		case 16:
+		case 21:
 			move_xy(_client, 0.61, -0.56);
 			state++;
 			break;
-		case 17:
+		case 22:
 			if((x_odo > 0.56 && x_odo < 0.66) && (y_odo > -0.61 && y_odo < -0.51))
     		state++;
 			break;
-		case 18:
+		case 23:
  			angle(_client, 0);
 			state++;
 			break;
-		case 19:
+		case 24:
 			move_xy(_client, 2.14, -0.6);
 			state++;
 			break;
-		case 20:
+		case 25:
 			if((x_odo > 1.99 && x_odo < 2.19) && (y_odo > -0.65 && y_odo < -0.55))
     		state++;
 			break;
-		case 21:
+		case 26:
  			angle(_client, -0.838);
 			state++;
 			break;
-		case 22:
+		case 27:
 			move_xy(_client, 2.595, -1.14);
 			state++;
 			break;
-		case 23:
+		case 28:
 			if((x_odo > 2.545 && x_odo < 2.645) && (y_odo > -1.19 && y_odo < -1.09))
     		state++;
 			break;
-		case 24:
- 			angle(_client, -2.478);
-			state++;
-			break;
-		case 25:
-			move_xy(_client, 2.34, -1.34);
-			state++;
-			break;
-		case 26:
-			if((x_odo > 2.29 && x_odo < 2.39) && (y_odo > -1.39 && y_odo < -1.29))
-    		state++;
-			break;
-		case 27:
- 			angle(_client, -2.478);
-			state++;
-			break;
-		case 28: //ramasse les balles qui sont à trier
-			tempo++;
-			if(tempo > 40)
-			{
-  			state++;
-  			tempo = 0;
-			}
-			break;
 		case 29:
-			move_xy(_client, 2.595, -1.14);
+ 			angle(_client, -2.478);
 			state++;
 			break;
 		case 30:
-			if((x_odo > 2.545 && x_odo < 2.645) && (y_odo > -1.19 && y_odo < -1.09))
-    		state++;
+			move_xy(_client, 2.34, -1.34);
+			state++;
 			break;
 		case 31:
- 			angle(_client, -3.648);
-			state++;
+			if((x_odo > 2.29 && x_odo < 2.39) && (y_odo > -1.39 && y_odo < -1.29))
+    		state++;
 			break;
 		case 32:
-			move_xy(_client, 1.45, -0.52);
+ 			angle(_client, -2.478);
 			state++;
 			break;
-		case 33:
-			if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -0.57 && y_odo < -0.47))
-    		state++;
-			break;
-		case 34:
- 			angle(_client, 1.571);
-			state++;
-			break;
-		case 35:
-			move_xy(_client, 1.45, -1.09);
-			state++;
-			break;
-		case 36:
-			if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -1.14 && y_odo < -1.04))
-    		state++;
-			break;
-		case 37: //dépose balles triées
+		case 33: //ramasse les balles qui sont à trier
+      // do_Tri_Alt(_client)
+      state++;
+      break;
+    case 34:
+      //if(check_Tri_Alt(_client))
 			tempo++;
-			if(tempo > 40)
+			if(tempo > 20)
 			{
   			state++;
   			tempo = 0;
 			}
 			break;
+		case 35:
+			move_xy(_client, 2.595, -1.14);
+			state++;
+			break;
+		case 36:
+			if((x_odo > 2.545 && x_odo < 2.645) && (y_odo > -1.19 && y_odo < -1.09))
+    		state++;
+			break;
+		case 37:
+ 			angle(_client, -3.648);
+			state++;
+			break;
 		case 38:
- 			angle(_client, 2.443);
+			move_xy(_client, 1.45, -0.52);
 			state++;
 			break;
 		case 39:
-			move_xy(_client, 0.085, 0);
-			state++;
-			break;
-		case 40:
-			if((x_odo > 0.035 && x_odo < 0.135) && (y_odo > -0.05 && y_odo < 0.05))
+			if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -0.57 && y_odo < -0.47))
     		state++;
 			break;
-		case 41:
+		case 40:
  			angle(_client, 1.571);
 			state++;
 			break;
-		case 42: //Tire balles triées
+		case 41:
+			move_xy(_client, 1.45, -1.09);
+			state++;
+			break;
+		case 42:
+			if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -1.14 && y_odo < -1.04))
+    		state++;
+			break;
+		case 43: //dépose balles triées
+      //do_ouvrirTrappe(_client)
+      state++;
+      break;
+    case 44:
+      //if(check_ouvrirTrappe(_client))
+      state++;
+      break;
+    case 45:
+      //tempo pour que les balles tombent
 			tempo++;
-			if(tempo > 40)
+			if(tempo > 20)
 			{
-  			state = 0;
+  			state++;
   			tempo = 0;
 			}
 			break;
+    case 46:
+      //do_fermerTrappe(_client)
+      state++;
+      break;
+    case 47:
+      //if(check_fermerTrape(_client))
+      state++;
+      break;
+		case 48:
+ 			angle(_client, 2.443);
+			state++;
+			break;
+		case 49:
+			move_xy(_client, 0.085, 0);
+			state++;
+			break;
+		case 50:
+			if((x_odo > 0.035 && x_odo < 0.135) && (y_odo > -0.05 && y_odo < 0.05))
+    		state++;
+			break;
+		case 51:
+ 			angle(_client, 1.571);
+			state++;
+			break;
+		case 52: //Tire balles triées
+      //Lancer turbine
+      state++;
+      break;
+    case 53:
+      //if(check_turbine_on)
+      state++;
+      break;
+    case 54:
+      //do_Ouvrir_Canon(_client)
+      state++;
+      break;
+    case 55:
+      //if(check_Ouvrir_Canon(_client))
+      state++;
+      break;
+    case 56:
+      // Tempo le temps de lancer les balles
+			tempo++;
+			if(tempo > 20)
+			{
+  			state++;
+  			tempo = 0;
+			}
+			break;
+    case 57:
+      //do_Fermer_Canon(_client)
+      state++;
+      break;
+    case 58:
+      //if(check_Fermer_Canon(_client))
+      state = 0;
+      break;
 	}
   std::cout << date.sec << " " << date.nsec << " " << x_odo << " " << y_odo << " " << theta_odo
   << " " << state << std::endl;
@@ -613,11 +763,13 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "script_match");
   ros::NodeHandle n;
+  //do_Init_AX12(_client);
 
   _client = n.serviceClient<comm::Comm>("pic_pi_comm");
   //ros::Subscriber sub = n.subscribe("odom", 1000, odo_callback);
 
   //ros::Rate r(5);
+  //if (check_Init_AX12(_client))
   ros::Timer timer = n.createTimer(ros::Duration(0.5), script_callback);
 
   ros::spin();
