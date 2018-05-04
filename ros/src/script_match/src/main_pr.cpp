@@ -125,7 +125,7 @@ void script_callback(const ros::TimerEvent& trash)
 			state++;
 			break;
 		case 3:
-      if(theta_odo > -2.38 && theta_odo < -2.34)
+      if(theta_odo > -2.4 && theta_odo < -2.3)
         state++;
       break;
     case 4:
@@ -142,7 +142,7 @@ void script_callback(const ros::TimerEvent& trash)
 			break;
 		case 7: //ramasse les balles de la bonne couleur
 			tempo++;
-			if(tempo > 40)
+			if(tempo > 10 )
 			{
   			state++;
   			tempo = 0;
