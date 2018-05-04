@@ -64,6 +64,305 @@ void get_odo(ros::ServiceClient client, float &x, float &y, float &theta)
   //std::cout << x_odo << " " << y_odo << endl;*/
 }
 
+//////////////////////////// Actions AX12 ////////////////////////////
+void do_Init_AX12(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "AX12INIT\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_Init_AX12(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVERAX12INIT\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+void do_Ouvrir_Canon(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "OUVRIRCANON\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_Ouvrir_Canon(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVEROUVRIRCANON\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+void do_Fermer_Canon(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "FERMERCANON\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_Fermer_Canon(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVERFERMERCANON\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+void do_Tomber_Balle(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "TOMBERBALLE\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_Tomber_Balle(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVERTOMBERBALLE\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+void do_Balle_Turbine(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "BALLETURB\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_Balle_Turbine(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVERBALLETURB\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+void do_Balle_Trappe(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "BALLETRAP\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_Balle_Trappe(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVERBALLETRAP\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+void do_Tri_Canon(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "TRICANON\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_Tri_Canon(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVERTRICANON\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+void do_Tri_Alt(ros::ServiceClient client)
+{
+  comm::Comm srv;
+  string str;
+
+  str = "TRIALT\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+  }
+}
+
+bool check_Tri_Alt(ros::ServiceClient client)
+{
+  bool ok = false;
+  comm::Comm srv;
+  string str;
+
+  str = "OVERTRIALT\n";
+
+  srv.request.command = str;
+
+  if(client.call(srv))
+  {
+    //Réponse éventuelle
+    str = (string)srv.response.answer;
+    if(str=="STATE:0")
+      ok=true;
+  }
+
+  return ok;
+}
+
+/////////////////////////////////////////////////////////////////////
+
 void move_xy(ros::ServiceClient client, float x, float y)
 {
   comm::Comm srv;
