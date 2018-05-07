@@ -6,6 +6,7 @@
 #include <string>
 #include <cstdio>
 #include <cstring>
+#include <iostream>
 #include "comm/Comm.h"
 
 #define pi 3.142
@@ -452,6 +453,8 @@ void move_xy(ros::ServiceClient client, float x, float y)
   string str;
   stringstream ss;
   //Action a réaliser sur le pic
+	ss << fixed;
+	ss.precision(4);
   ss << "MOVESEG " << x << " " << y << endl;
   srv.request.command = ss.str();
 
@@ -468,6 +471,8 @@ void angle(ros::ServiceClient client, float theta)
   string str;
   stringstream ss;
   //Action a réaliser sur le pic
+	ss << fixed;
+	ss.precision(4);
   ss << "ANGLE " << theta << endl;
   srv.request.command = ss.str();
 

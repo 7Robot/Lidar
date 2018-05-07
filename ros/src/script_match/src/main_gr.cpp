@@ -3,6 +3,7 @@
 #include <tf/LinearMath/Matrix3x3.h>
 #include <tf/LinearMath/Quaternion.h>
 #include <string>
+#include <iostream>
 #include "comm/Comm.h"
 
 using namespace std;
@@ -669,6 +670,8 @@ void move_xy(ros::ServiceClient client, float x, float y)
   string str;
   stringstream ss;
   //Action a réaliser sur le pic
+	ss << fixed;
+	ss.precision(4);
   ss << "MOVESEG " << x << " " << y << endl;
   srv.request.command = ss.str();
 
@@ -685,6 +688,8 @@ void angle(ros::ServiceClient client, float theta)
   string str;
   stringstream ss;
   //Action a réaliser sur le pic
+	ss << fixed;
+	ss.precision(4);
   ss << "ANGLE " << theta << endl;
   srv.request.command = ss.str();
 
