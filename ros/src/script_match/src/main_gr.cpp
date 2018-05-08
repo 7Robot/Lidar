@@ -31,640 +31,73 @@ void odo_callback(const nav_msgs::Odometry::ConstPtr& odom_in)
   //std::cout << x_odo << " " << y_odo << endl;
 }
 
-void do_Init_AX12(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "AX12INIT\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_Init_AX12(ros::ServiceClient client)
+bool check_answer(ros::ServiceClient client, comm::Comm srv)
 {
   bool ok = false;
-  comm::Comm srv;
   string str;
-
-  str = "OVERAX12INIT\n";
-
-  srv.request.command = str;
 
   if(client.call(srv))
   {
-    //Réponse éventuelle
     str = (string)srv.response.answer;
-    //traitement sur str pour savoir si ok ou pas
-    if(str=="STATE:0") // verif le format de la reponse pour recup info
-      ok=true;
+    if(str == "STATE:0")
+      ok = true;
   }
 
   return ok;
 }
 
-void do_Ranger_Bras_Gauche(ros::ServiceClient client)
+bool do_AX12action(ros::ServiceClient client, string command)
 {
   comm::Comm srv;
   string str;
 
-  str = "RANGERBRASGAUCHE\n";
+  str = command;
 
   srv.request.command = str;
 
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
+  return check_answer(client, srv);
 }
 
-void do_Check_Ranger_Bras_Gauche(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERRANGERBRASGAUCHE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Bras_Gauche_Abeille(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "BRASGAUCHEABE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Bras_Gauche_Abeille(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERBRASGAUCHEABE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Bras_Gauche_Couleurs(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "BRASGAUCHECOL\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Bras_Gauche_Couleurs(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERBRASGAUCHECOL\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Ranger_Bras_Droit(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "RANGERBRASDROIT\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Ranger_Bras_Droit(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERRANGERBRASDROIT\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Bras_Droit_Abeille(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "BRASDROITABE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Bras_Droit_Abeille(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERBRASDROITABE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Bras_Droit_Couleurs(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "BRASDROITCOL\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Bras_Droit_Couleurs(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERBRASDROITCOL\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Fermer_Pince_Avant(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "FERMERPINCEAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Fermer_Pince_Avant(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERFERMERPINCEAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Fermer_Pince_Arriere(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "FERMERPINCEAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Fermer_Pince_Arriere(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERFERMERPINCEAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Recup_Cube_Avant(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "RECUPCUBEAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Recup_Cube_Avant(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERRECUPCUBEAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Recup_Cube_Arriere(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "RECUPCUBEAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Recup_Cube_Arriere(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERRECUPCUBEAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Recup_Dernier_Cube_Avant(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "RECUPDERAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Recup_Dernier_Cube_Avant(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERRECUPDERAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Recup_Dernier_Cube_Arriere(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "RECUPDERAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Recup_Dernier_Cube_Arriere(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERRECUPDERAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Liberer_Cube_Avant(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "LIBCUBEAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Liberer_Cube_Avant(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERLIBCUBEAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Liberer_Cube_Arriere(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "LIBCUBEAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Liberer_Cube_Arriere(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERLIBCUBEAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Interrupteur_Avant(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "INTAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Interrupteur_Avant(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERINTAV\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Interrupteur_Arriere(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "INTAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Interrupteur_Arriere(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERINTAR\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void do_Testax(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "TESTAX\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-void do_Check_Testax(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERTESTAX\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-}
-
-void move_xy(ros::ServiceClient client, float x, float y)
+/* Actions AX12 à appeler 
+"AX12INIT\n";
+"OVERAX12INIT\n";
+"RANGERBRASGAUCHE\n";
+"OVERRANGERBRASGAUCHE\n";
+"BRASGAUCHEABE\n";
+"OVERBRASGAUCHEABE\n";
+"BRASGAUCHECOL\n";
+"OVERBRASGAUCHECOL\n";
+"RANGERBRASDROIT\n";
+"OVERRANGERBRASDROIT\n";
+"BRASDROITABE\n";
+"OVERBRASDROITABE\n";
+"BRASDROITCOL\n";
+"OVERBRASDROITCOL\n";
+"FERMERPINCEAV\n";
+"OVERFERMERPINCEAV\n";
+"FERMERPINCEAR\n";
+"OVERFERMERPINCEAR\n";
+"RECUPCUBEAV\n";
+"OVERRECUPCUBEAV\n";
+"RECUPCUBEAR\n";
+"OVERRECUPCUBEAR\n";
+"RECUPDERAV\n";
+"OVERRECUPDERAV\n";
+"RECUPDERAR\n";
+"OVERRECUPDERAR\n";
+"LIBCUBEAV\n";
+"OVERLIBCUBEAV\n";
+"LIBCUBEAR\n";
+"OVERLIBCUBEAR\n";
+"INTAV\n";
+"OVERINTAV\n";
+"INTAR\n";
+"OVERINTAR\n";
+"TESTAX\n";
+"OVERTESTAX\n";
+*/
+
+bool move_xy(ros::ServiceClient client, float x, float y)
 {
   comm::Comm srv;
   string str;
@@ -675,14 +108,10 @@ void move_xy(ros::ServiceClient client, float x, float y)
   ss << "MOVESEG " << x << " " << y << endl;
   srv.request.command = ss.str();
 
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
+  return check_answer(client, srv);
 }
 
-void angle(ros::ServiceClient client, float theta)
+bool angle(ros::ServiceClient client, float theta)
 {
   comm::Comm srv;
   string str;
@@ -693,11 +122,7 @@ void angle(ros::ServiceClient client, float theta)
   ss << "ANGLE " << theta << endl;
   srv.request.command = ss.str();
 
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
+  return check_answer(client, srv);
 }
 
 void script_callback(const ros::TimerEvent& trash)
@@ -2367,8 +1792,10 @@ int main(int argc, char** argv)
 
   _client = n.serviceClient<comm::Comm>("pic_pi_comm");
   ros::Subscriber sub = n.subscribe("odom", 1000, odo_callback);
+  //do_AX12action(_client, "AX12INIT\n");
 
   //ros::Rate r(5);
+  //if (do_AX12action(_client, "OVERAX12INIT\n"))
   ros::Timer timer = n.createTimer(ros::Duration(0.2), script_callback);
 
   ros::spin();

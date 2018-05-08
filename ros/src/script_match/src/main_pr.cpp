@@ -9,7 +9,7 @@
 #include <iostream>
 #include "comm/Comm.h"
 
-#define pi 3.142
+#define pi 3.14159
 
 using namespace std;
 
@@ -66,388 +66,35 @@ void get_odo(ros::ServiceClient client, float &x, float &y, float &theta)
 }
 
 //////////////////////////// Actions AX12 ////////////////////////////
-void do_Init_AX12(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "AX12INIT\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_Init_AX12(ros::ServiceClient client)
+bool check_answer(ros::ServiceClient client, comm::Comm srv)
 {
   bool ok = false;
-  comm::Comm srv;
   string str;
-
-  str = "OVERAX12INIT\n";
-
-  srv.request.command = str;
 
   if(client.call(srv))
   {
     //Réponse éventuelle
     str = (string)srv.response.answer;
     if(str=="STATE:0")
-      ok=true;
+      ok = true;
   }
-
   return ok;
 }
 
-// Faire tomber les balles dans le canon
-void do_Ouvrir_Canon(ros::ServiceClient client)
+bool do_AX12action(ros::ServiceClient client, string command)
 {
   comm::Comm srv;
   string str;
-
-  str = "OUVRIRCANON\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_Ouvrir_Canon(ros::ServiceClient client)
-{
   bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVEROUVRIRCANON\n";
+  str = command;
 
   srv.request.command = str;
 
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-
-  return ok;
+  return check_answer(client, srv);
 }
-
-// Refermer pour lancer la turbine
-void do_Fermer_Canon(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "FERMERCANON\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_Fermer_Canon(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERFERMERCANON\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-
-  return ok;
-}
-
-// Ouvrir trappe
-void do_ouvrirTrappe(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "OUVRIRTRAPPE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_ouvrirTrappe(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVEROUVRIRTRAPPE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-
-  return ok;
-}
-
-// Fermer trappe
-void do_fermerTrappe(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "FERMERTRAPPE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_fermerTrape(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERFERMERTRAPPE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-
-  return ok;
-}
-
-// Bras de tri
-void do_Tomber_Balle(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "TOMBERBALLE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_Tomber_Balle(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERTOMBERBALLE\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-
-  return ok;
-}
-
-// Emmène une balle vers turbine
-void do_Balle_Turbine(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "BALLETURB\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_Balle_Turbine(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERBALLETURB\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-
-  return ok;
-}
-
-// Emène une balle vers la trappe
-void do_Balle_Trappe(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "BALLETRAP\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_Balle_Trappe(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERBALLETRAP\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-
-  return ok;
-}
-
-// Récuperer toutes les balles
-void do_Tri_Canon(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "TRICANON\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_Tri_Canon(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERTRICANON\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-
-  return ok;
-}
-
-// Récupérer une vers la turbine, une vers la déchetterie
-void do_Tri_Alt(ros::ServiceClient client)
-{
-  comm::Comm srv;
-  string str;
-
-  str = "TRIALT\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
-}
-
-bool check_Tri_Alt(ros::ServiceClient client)
-{
-  bool ok = false;
-  comm::Comm srv;
-  string str;
-
-  str = "OVERTRIALT\n";
-
-  srv.request.command = str;
-
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-    if(str=="STATE:0")
-      ok=true;
-  }
-
-  return ok;
-}
-
 /////////////////////////////////////////////////////////////////////
 
-void move_xy(ros::ServiceClient client, float x, float y)
+bool move_xy(ros::ServiceClient client, float x, float y)
 {
   comm::Comm srv;
   string str;
@@ -458,14 +105,10 @@ void move_xy(ros::ServiceClient client, float x, float y)
   ss << "MOVESEG " << x << " " << y << endl;
   srv.request.command = ss.str();
 
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
+  return check_answer(client, srv);
 }
 
-void angle(ros::ServiceClient client, float theta)
+bool angle(ros::ServiceClient client, float theta)
 {
   comm::Comm srv;
   string str;
@@ -476,11 +119,7 @@ void angle(ros::ServiceClient client, float theta)
   ss << "ANGLE " << theta << endl;
   srv.request.command = ss.str();
 
-  if(client.call(srv))
-  {
-    //Réponse éventuelle
-    str = (string)srv.response.answer;
-  }
+  return check_answer(client, srv);
 }
 
 void script_callback(const ros::TimerEvent& trash)
@@ -528,11 +167,11 @@ void script_callback(const ros::TimerEvent& trash)
 			state++;
 			break;
 		case 7: //ramasse les balles de la bonne couleur
-      //do_Tri_Canon(_client);
+      //do_AX12action(_client, "TRICANON\n");
       state++;
       break;
     case 8:
-      //if(check_Tri_Canon(_client))
+      //if(do_AX12action(_client, "OVERTRICANON\n"))
       state++;
       break;
 		case 9:
@@ -560,13 +199,12 @@ void script_callback(const ros::TimerEvent& trash)
 			state++;
 			break;
 		case 15: //envoie les balles dans la citerne
-      // Launch turbine
-      //state++;
+      //do_AX12action(_client, "TURBON\n");
       state++;
 			break;
     case 16:
-      // if(check_turbine_on)
-      // OUVRIRCANON
+      // if(do_AX12action(_client, "OVERTURBON\n"))
+      // do_AX12action(_client, "OUVRIRCANON\n");
       state++;
       break;
     case 17:
@@ -579,13 +217,13 @@ void script_callback(const ros::TimerEvent& trash)
       }
       break;
     case 18:
-      // Stop turbine
-      // if(check_turbine_off)
+      // do_AX12action(_client, "TURBOFF\n");
+      // if(do_AX12action(_client, "OVERTURBOFF\n"))
       state++;
       break;
     case 19:
-      // FERMERCANON
-      // if(check_Fermer_Canon(_client))
+      // do_AX12action(_client, "FERMERCANON\n")
+      // if(do_AX12action(_client, "OVERFERMERCANON\n"))
       state++;
       break;
 		case 20:
@@ -641,11 +279,11 @@ void script_callback(const ros::TimerEvent& trash)
 			state++;
 			break;
 		case 33: //ramasse les balles qui sont à trier
-      // do_Tri_Alt(_client)
+      // do_AX12action(_client, "TRIALT\n");
       state++;
       break;
     case 34:
-      //if(check_Tri_Alt(_client))
+      //if(do_AX12action(_client, "OVERTRIALT\n"))
 			tempo++;
 			if(tempo > 20)
 			{
@@ -686,11 +324,11 @@ void script_callback(const ros::TimerEvent& trash)
     		state++;
 			break;
 		case 43: //dépose balles triées
-      //do_ouvrirTrappe(_client)
+      //do_AX12action(_client, "OUVRIRTRAPPE\n");
       state++;
       break;
     case 44:
-      //if(check_ouvrirTrappe(_client))
+      //if(do_AX12action(_client, "OVEROUVRIRTRAPPE\n"))
       state++;
       break;
     case 45:
@@ -703,11 +341,11 @@ void script_callback(const ros::TimerEvent& trash)
 			}
 			break;
     case 46:
-      //do_fermerTrappe(_client)
+      //do_AX12action(_client, "FERMERTRAPPE\n");
       state++;
       break;
     case 47:
-      //if(check_fermerTrape(_client))
+      //if(do_AX12action(_client, "OVERFERMERTRAPPE\n"))
       state++;
       break;
 		case 48:
@@ -727,19 +365,19 @@ void script_callback(const ros::TimerEvent& trash)
 			state++;
 			break;
 		case 52: //Tire balles triées
-      //Lancer turbine
+      //do_AX12action(_client, "TURBON\n");
       state++;
       break;
     case 53:
-      //if(check_turbine_on)
+      //if(do_AX12action(_client, "OVERTURBON\n"))
       state++;
       break;
     case 54:
-      //do_Ouvrir_Canon(_client)
+      //do_AX12action(_client, "OUVRIRCANON\n");
       state++;
       break;
     case 55:
-      //if(check_Ouvrir_Canon(_client))
+      //if(do_AX12action(_client, "OVEROUVRIRCANON\n"))
       state++;
       break;
     case 56:
@@ -752,11 +390,11 @@ void script_callback(const ros::TimerEvent& trash)
 			}
 			break;
     case 57:
-      //do_Fermer_Canon(_client)
+      //do_AX12action(_client, "FERMERCANON\n");
       state++;
       break;
     case 58:
-      //if(check_Fermer_Canon(_client))
+      //if(do_AX12action(_client, "OVERFERMERCANON\n"))
       state = 0;
       break;
 	}
@@ -768,13 +406,13 @@ int main(int argc, char** argv)
 {
   ros::init(argc, argv, "script_match");
   ros::NodeHandle n;
-  //do_Init_AX12(_client);
-
+  
   _client = n.serviceClient<comm::Comm>("pic_pi_comm");
+  //do_AX12action(_client, "AX12INIT\n");
   //ros::Subscriber sub = n.subscribe("odom", 1000, odo_callback);
 
   //ros::Rate r(5);
-  //if (check_Init_AX12(_client))
+  //if (do_AX12action(_client, "OVERAX12INIT\n"))
   ros::Timer timer = n.createTimer(ros::Duration(0.5), script_callback);
 
   ros::spin();
