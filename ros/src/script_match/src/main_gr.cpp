@@ -14,32 +14,53 @@ float theta_odo = 0;
 
 ros::ServiceClient _client;
 
-
-void odo_callback(const nav_msgs::Odometry::ConstPtr& odom_in)
+struct not_digit
 {
-  x_odo = odom_in->pose.pose.position.x;
-  y_odo = odom_in->pose.pose.position.y;
-  tf::Quaternion q(odom_in->pose.pose.orientation.x,
-                   odom_in->pose.pose.orientation.y,
-                   odom_in->pose.pose.orientation.z,
-                   odom_in->pose.pose.orientation.w);
-  tf::Matrix3x3 m(q);
-  double theta;
-  double trash;
-  m.getRPY(trash, trash, theta);
-  theta_odo = theta;
-  //std::cout << x_odo << " " << y_odo << endl;
-}
+  bool operator()(const char c)
+  {
+    return c != ',' && !std::isdigit(c) && c != '-' && c != '.';
+  }
+};
 
-bool check_answer(ros::ServiceClient client, comm::Comm srv)
+void get_odo(ros::ServiceClient client, float &x, float &y, float &theta)
 {
-  bool ok = false;
+  comm::Comm srv;
   string str;
+  char trash;
+
+  not_digit not_a_digit;
+  std::string::iterator fin;
+
+  srv.request.command = "GETODO\n";
 
   if(client.call(srv))
   {
     str = (string)srv.response.answer;
-    if(str == "STATE:0")
+    fin = std::remove_if(str.begin(), str.end(), not_a_digit);
+    string data(str.begin(), fin);
+    stringstream ss(data);
+    ss >> x >> trash >> y >> trash >> theta;
+    //cout << x << ' ' << y << ' ' << th << std::endl;
+  }
+  else
+  {
+    ROS_ERROR("Failed to call service pic_pi_comm");
+  }
+}
+
+bool check_AX12action(ros::ServiceClient client, string command)
+{
+  comm::Comm srv;
+  bool ok = false;
+  string str;
+
+  srv.request.command = command;
+
+  if(client.call(srv))
+  {
+    str = (string)srv.response.answer;
+    cout << str << endl;
+    if(str.find("STATE:0") != string::npos) // == "STATE:0")
       ok = true;
   }
 
@@ -49,16 +70,16 @@ bool check_answer(ros::ServiceClient client, comm::Comm srv)
 bool do_AX12action(ros::ServiceClient client, string command)
 {
   comm::Comm srv;
-  string str;
+  bool etatComm = false;
 
-  str = command;
+  srv.request.command = command;
 
-  srv.request.command = str;
-
-  return check_answer(client, srv);
+  if(client.call(srv))
+    etatComm = true;
+  return etatComm;
 }
 
-/* Actions AX12 à appeler 
+/* Actions AX12 à appeler
 "AX12INIT\n";
 "OVERAX12INIT\n";
 "RANGERBRASGAUCHE\n";
@@ -97,18 +118,46 @@ bool do_AX12action(ros::ServiceClient client, string command)
 "OVERTESTAX\n";
 */
 
+bool check_position(ros::ServiceClient client)
+{
+  // AsservDone == 0 => non terminée
+  comm::Comm srv;
+  bool asservDone = false;
+  string str;
+
+  srv.request.command = "DONE\n";
+
+  if(client.call(srv))
+  {
+    str = (string)srv.response.answer;
+    if(str.find("1") != string::npos) // == "1")
+      asservDone = true;
+      //cout << str << endl;
+  }
+
+  return asservDone;
+}
+
 bool move_xy(ros::ServiceClient client, float x, float y)
 {
   comm::Comm srv;
   string str;
   stringstream ss;
+  bool ok = false;
+
   //Action a réaliser sur le pic
 	ss << fixed;
 	ss.precision(4);
   ss << "MOVESEG " << x << " " << y << endl;
   srv.request.command = ss.str();
 
-  return check_answer(client, srv);
+  if(client.call(srv))
+  {
+    str = (string)srv.response.answer;
+    if(str == "STATE:0")
+      ok = true;
+  }
+  return ok;
 }
 
 bool angle(ros::ServiceClient client, float theta)
@@ -116,16 +165,332 @@ bool angle(ros::ServiceClient client, float theta)
   comm::Comm srv;
   string str;
   stringstream ss;
+  bool ok = false;
+
   //Action a réaliser sur le pic
 	ss << fixed;
 	ss.precision(4);
   ss << "ANGLE " << theta << endl;
   srv.request.command = ss.str();
 
-  return check_answer(client, srv);
+  if(client.call(srv))
+  {
+    str = (string)srv.response.answer;
+    if(str == "STATE:0")
+      ok = true;
+  }
+  return ok;
+
+}
+
+string getStart(ros::ServiceClient client)
+{
+  string value;
+  comm::Comm srv;
+
+  srv.request.command = "MATCHSTATUS\n";
+
+  if(client.call(srv))
+    value = (string)srv.response.answer;
+  return value;
 }
 
 void script_callback(const ros::TimerEvent& trash)
+{
+  static int state = 0;
+  static int tempo = 0;
+  //float x_odo = 0;
+  //float y_odo = 0;
+  //float theta_odo = 0;
+  switch(state)
+  {
+    //Depart
+    case 0:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 0.885, 0);
+      state++;
+      break;
+    //Devant l'interrupteur
+    case 1:
+      //if((x_odo > 0.83 && x_odo < 0.93) && (y_odo > -0.05 && y_odo < 0.05))
+      if(check_position(_client))
+        state = 10;
+      break;
+    case 10:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client, 1.571);
+      state = 20;
+      break;
+    case 20:
+      // Check angle
+      if(check_position(_client))
+        state = 30;
+      break;
+    case 30:
+      //activation interrupteur
+      do_AX12action(_client, "INTAV\n");
+      state = 40;
+      break;
+    case 40:
+      //check activation fini
+      if(check_AX12action(_client, "OVERINTAV\n"))
+        state = 50;
+      break;
+    //Recul
+    case 50:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client, 1.833);
+      state = 60;
+      break;
+    case 60:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 1.04, -0.55);
+      state = 70;
+      break;
+    case 70:
+      //(x_odo > 0.99 && x_odo < 1.09) && (y_odo > -0.6 && y_odo < -0.5)
+      if(check_position(_client))
+        state = 80;
+      break;
+    case 80:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client, -2.315);
+      state = 90;
+      break;
+    case 90:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 0.0, -1.52);
+      state = 100;
+      break;
+    case 100:
+      //if((x_odo < 0.05 && x_odo > -0.05) && (y_odo > -1.57 && y_odo < -1.47))
+      if(check_position(_client))
+        state = 110;
+      break;
+    case 110:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client, 0);
+      state = 120;
+      break;
+    case 120:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, -0.06, -1.52);
+      state = 130;
+      break;
+    case 130:
+      //if((x_odo < -0.01 && x_odo > -0.11) && (y_odo > -1.57 && y_odo < -1.47))
+      if(check_position(_client))
+        state = 140;
+      break;
+    case 140:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client,0);
+      state = 150;
+      break;
+    case 150:
+      //activation bras droit abeille
+      do_AX12action(_client, "BRASDROITABE\n");
+      state++;
+      break;
+    case 151:
+      if(check_AX12action(_client, "OVERBRASDROITABE\n"))
+        state = 160;
+      break;
+    case 160:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 0.17, -1.57);
+      state = 170;
+      break;
+    case 170:
+      //if((x_odo < 0.22 && x_odo > 0.14) && (y_odo > -1.63 && y_odo < -1.53))
+      if(check_position(_client))
+        state = 180;
+      break;
+    case 180:
+      //remonter bras droit abeille
+      do_AX12action(_client, "RANGERBRASDROIT\n");
+      state++;
+      break;
+    case 181:
+      if(check_AX12action(_client, "OVERRANGERBRASDROIT\n"))
+        state = 190;
+      break;
+    case 190:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client, 0.96);
+      state = 200;
+      break;
+    case 200:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 0.64, -0.77);
+      state = 210;
+      break;
+    case 210:
+      //if((x_odo < 0.69 && x_odo > 0.59) && (y_odo > -0.82 && y_odo < -0.72))
+      if(check_position(_client))
+        state = 220;
+      break;
+    case 220:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client, 1.571);
+      state = 230;
+      break;
+    case 230:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 0.64, -0.5);
+      state = 240;
+      break;
+    case 240:
+      //if((x_odo < 0.69 && x_odo > 0.59) && (y_odo > -0.45 && y_odo < -0.55))
+      if(check_position(_client))
+        state = 250;
+      break;
+    case 250:
+      //prise cubes
+      do_AX12action(_client, "RECUPCUBEAV\n");
+      state++;
+      break;
+    case 251:
+      if(check_AX12action(_client, "OVERRECUPCUBEAV\n"))
+        state = 260;
+      break;
+    case 260:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 0.6, -0.03);
+      state = 270;
+      break;
+    case 270:
+      //if((x_odo < 0.65 && x_odo > 0.55) && (y_odo > -0.08 && y_odo < 0.02))
+      if(check_position(_client))
+        state = 280;
+      break;
+    case 280:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client, 1.571);
+      state = 290;
+      break;
+    case 290:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 0.6, -0.09);
+      state = 300;
+      break;
+    case 300:
+      //if((x_odo < 0.65 && x_odo > 0.55) && (y_odo > -0.14 && y_odo < -0.04))
+      if(check_position(_client))
+        state = 310;
+      break;
+    case 310:
+      //ouvrir porte
+      tempo++;;
+      if(tempo > 20)
+      {
+        state = 320;
+        tempo = 0;
+      }
+      break;
+    case 320:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 0.6, -0.2);
+      state = 330;
+      break;
+    case 330:
+      //if((x_odo < 0.65 && x_odo > 0.55) && (y_odo > -0.25 && y_odo < -0.15))
+      if(check_position(_client))
+        state = 340;
+      break;
+    case 340:
+      //fermer porte
+      tempo++;
+      if(tempo > 20)
+      {
+        state = 350;
+        tempo = 0;
+      }
+      break;
+    case 350:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client,-1.95);
+      state = 360;
+      break;
+    case 360:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client,0.38,-0.95);
+      state = 370;
+      break;
+    case 370:
+      //if((x_odo < 0.43 && x_odo > 0.33) && (y_odo > -1.0 && y_odo < -0.90))
+      if(check_position(_client))
+        state = 380;
+      break;
+    case 380:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client,-3.14);
+      state = 390;
+      break;
+    case 390:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client,0.31,-0.95);
+      state = 400;
+      break;
+    case 400:
+      //if((x_odo > 0.26 && x_odo < 0.36) && (y_odo > -1.0 && y_odo < -0.90))
+      if(check_position(_client))
+        state = 410;
+      break;
+    case 410: //Prise des cubes
+      tempo++;
+      if(tempo > 40)
+      {
+        state = 420;
+        tempo = 0;
+      }
+      break;
+    case 430:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      angle(_client,1.57);
+      state = 440;
+      break;
+    case 440:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client,0.31,-0.03);
+      state = 450;
+      break;
+    case 450:
+      //if((x_odo > 0.26 && x_odo < 0.36) && (y_odo > -0.08 && y_odo < 0.0))
+      if(check_position(_client))
+        state = 460;
+      break;
+    case 460: //Ouvrir porte (déposer les cubes)
+      tempo++;
+      if(tempo > 40)
+      {
+        state = 470;
+        tempo = 0;
+      }
+      break;
+    case 470:
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client,0.31,-0.2);
+      state = 480;
+      break;
+    case 480:
+      //if((x_odo > 0.26 && x_odo < 0.36) && (y_odo > -0.25 && y_odo < -0.15))
+      if(check_position(_client))
+        state = 490;
+      break;
+    case 490: //Fermer porte
+      tempo++;
+      if(tempo > 20)
+      {
+        state = 0;
+        tempo = 0;
+      }
+      break;
+  }
+  std::cout << state << std::endl;
+}
+
+/*void script_callback(const ros::TimerEvent& trash)
 {
   static int state = 0;
   static int tempo = 0;
@@ -410,9 +775,10 @@ void script_callback(const ros::TimerEvent& trash)
       }
       break;
     */
-  }
+  /*}
   std::cout << state << std::endl;
 }
+*/
 
 bool move_orangeBleu()
 {
@@ -1787,16 +2153,21 @@ void move_seq9SpotC()
 
 int main(int argc, char** argv)
 {
+  string start = getStart(_client);
+  while (start != "1") {
+    start = getStart(_client);
+  }
+  
   ros::init(argc, argv, "script_match");
   ros::NodeHandle n;
 
   _client = n.serviceClient<comm::Comm>("pic_pi_comm");
-  ros::Subscriber sub = n.subscribe("odom", 1000, odo_callback);
+  //ros::Subscriber sub = n.subscribe("odom", 1000, odo_callback);
   //do_AX12action(_client, "AX12INIT\n");
 
   //ros::Rate r(5);
   //if (do_AX12action(_client, "OVERAX12INIT\n"))
-  ros::Timer timer = n.createTimer(ros::Duration(0.2), script_callback);
+  ros::Timer timer = n.createTimer(ros::Duration(2), script_callback);
 
   ros::spin();
 
