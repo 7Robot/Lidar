@@ -1,0 +1,12 @@
+<launch>
+
+  <node pkg="comm" type="comm" name="comm" output="screen">
+  </node>
+
+  <node pkg="odo" type="odo" name="odometry" output="screen">
+  </node>
+
+    <node pkg="script_match" type="main_gr" name="odometry" output="screen">
+    </node>
+
+</launch>
