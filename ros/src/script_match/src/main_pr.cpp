@@ -1,8 +1,5 @@
 #include <ros/ros.h>
-#include <nav_msgs/Odometry.h>
-#include <tf/LinearMath/Matrix3x3.h>
-#include <tf/LinearMath/Quaternion.h>
-
+#include <laser_geometry/laser_geometry.h>
 #include <string>
 #include <cstdio>
 #include <cstring>
@@ -16,8 +13,11 @@ using namespace std;
 /*float x_odo = 0;
 float y_odo = 0;
 float theta_odo = 0;*/
-
+// DETECTLIDAR 1 -> devant 0 -> arriere
+//ENLIDAR 0 pour activer evitement 1 pour desactiver
 ros::ServiceClient _client;
+
+int lidar_enable = 1;
 
 struct not_digit
 {
@@ -26,6 +26,59 @@ struct not_digit
     return c != ',' && !std::isdigit(c) && c != '-' && c != '.';
   }
 };
+
+void lidar_callback(const sensor_msgs::LaserScan::ConstPtr& scan_in)
+{
+  float angle = scan_in->angle_min;
+  float inc = scan_in->angle_increment;
+  int obstacle_av = 0;
+  int obstacle_ar = 0;
+  static bool p_obstacle = false;
+  static int cpt_obstacle = 0;
+
+  ros::Time date;
+  date = ros::Time::now();
+
+  //Check devant
+  for(int i = 585; i < 795; i += 2)
+  {
+    if(scan_in->ranges[i] < 0.4 && lidar_enable)
+    {
+       obstacle_av++;
+    }
+  }
+
+  //Check derriere
+  for(int i = 15; i < 225; i += 2)
+  {
+    if(scan_in->ranges[i] < 0.4 && lidar_enable)
+    {
+      obstacle_ar++;
+    }
+  }
+
+  //Analyze resultat
+  if((obstacle_av || obstacle_ar) && !p_obstacle)
+  {
+    cpt_obstacle++;
+    if(obstacle_av > 3 || obstacle_ar > 3)
+    {
+      cout << date.sec << " " << date.nsec << " obstacle" << "nombre d obstacle detecte : " << obstacle_av << " " << obstacle_ar << endl;
+      p_obstacle = true;
+    }
+  }
+  else
+  {
+    if(p_obstacle && (!obstacle_av && !obstacle_ar))
+    {
+      p_obstacle = false;
+      cout << date.sec << " " << date.nsec << " fin obstacle" << endl;
+    }
+  }
+  if(!obstacle_av && !obstacle_ar){
+    cpt_obstacle = 0;
+  }
+}
 
 void get_odo(ros::ServiceClient client, float &x, float &y, float &theta)
 {
@@ -51,31 +104,22 @@ void get_odo(ros::ServiceClient client, float &x, float &y, float &theta)
   {
     ROS_ERROR("Failed to call service pic_pi_comm");
   }
-  /*x_odo = odom_in->pose.pose.position.x;
-  y_odo = odom_in->pose.pose.position.y;
-  tf::Quaternion q(odom_in->pose.pose.orientation.x,
-                   odom_in->pose.pose.orientation.y,
-                   odom_in->pose.pose.orientation.z,
-                   odom_in->pose.pose.orientation.w);
-  tf::Matrix3x3 m(q);
-  double theta;
-  double trash;
-  m.getRPY(trash, trash, theta);
-  theta_odo = theta;
-  //std::cout << x_odo << " " << y_odo << endl;*/
 }
 
 //////////////////////////// Actions AX12 ////////////////////////////
-bool check_answer(ros::ServiceClient client, comm::Comm srv)
+bool check_AX12action(ros::ServiceClient client, string command)
 {
+  comm::Comm srv;
   bool ok = false;
   string str;
+
+  srv.request.command = command;
 
   if(client.call(srv))
   {
     //Réponse éventuelle
     str = (string)srv.response.answer;
-    if(str=="STATE:0")
+    if(str.find("STATE:0") != string::npos)
       ok = true;
   }
   return ok;
@@ -94,6 +138,23 @@ bool do_AX12action(ros::ServiceClient client, string command)
 }
 /////////////////////////////////////////////////////////////////////
 
+bool check_position(ross:ServiceClient client)
+{
+  comm::Comm srv;
+  bool asservDone = false;
+  string str;
+
+  srv.request.command("DONE\n");
+
+  if(client.call(srv))
+  {
+    str = (string)srv.response.answer;
+    if(str.find("1") != string::npos)
+      asservDone = true;
+  }
+  return asservDone;
+}
+
 bool move_xy(ros::ServiceClient client, float x, float y)
 {
   comm::Comm srv;
@@ -103,6 +164,7 @@ bool move_xy(ros::ServiceClient client, float x, float y)
 	ss << fixed;
 	ss.precision(4);
   ss << "MOVESEG " << x << " " << y << endl;
+
   srv.request.command = ss.str();
 
   return check_answer(client, srv);
@@ -134,266 +196,332 @@ void script_callback(const ros::TimerEvent& trash)
   ros::Time date;
   date = ros::Time::now();
 
-  get_odo(_client, x_odo, y_odo, theta_odo);
-
   switch(state)
   {
   	case 0:
-			move_xy(_client, 0.22, 0);
-  		state++;
+      get_odo(_client, x_odo, y_odo, theta_odo);
+      move_xy(_client, 0.1, 0);
+      cout << "mooving" << endl;
+      //move_xy(_client, 0.22, 0);
+  		state = 10;
   		break;
-		case 1:
-			if((x_odo > 0.17 && x_odo < 0.27) && (y_odo > -0.05 && y_odo < 0.05))
-  			state++;
-			break;
-		case 2:
- 			angle(_client, -2.36);
-			state++;
-			break;
-		case 3:
-      if(theta_odo > -2.4 && theta_odo < -2.3)
-        state++;
-      break;
-    case 4:
-			move_xy(_client, 0, -0.235);
-			state++;
-			break;
-		case 5:
-			if((x_odo > -0.05 && x_odo < 0.05) && (y_odo > -0.285 && y_odo < -0.185))
-    		state++;
-			break;
-		case 6:
- 			angle(_client, -2.36);
-			state++;
-			break;
-		case 7: //ramasse les balles de la bonne couleur
-      //do_AX12action(_client, "TRICANON\n");
-      state++;
-      break;
-    case 8:
-      //if(do_AX12action(_client, "OVERTRICANON\n"))
-      state++;
-      break;
-		case 9:
-			move_xy(_client, 0.1, -0.13);
-			state++;
-			break;
 		case 10:
-			if((x_odo > 0.01 && x_odo < 0.15) && (y_odo > -0.18 && y_odo < -0.08))
-    		state++;
+			//if((x_odo > 0.17 && x_odo < 0.27) && (y_odo > -0.05 && y_odo < 0.05))
+      if(check_position(_client))
+  			state = 20;
 			break;
-		case 11:
- 			angle(_client, 1.571);
-			state++;
+		case 20:
+ 			angle(_client, -2.36);
+			state = 30;
 			break;
-		case 12:
-			move_xy(_client, 0.1, 0.05);
-			state++;
-			break;
-		case 13:
-			if((x_odo > 0.05 && x_odo < 0.15) && (y_odo > 0 && y_odo < 0.15))
-    		state++;
-			break;
-		case 14:
- 			angle(_client, 1.571);
-			state++;
-			break;
-		case 15: //envoie les balles dans la citerne
-      //do_AX12action(_client, "TURBON\n");
-      state++;
-			break;
-    case 16:
-      // if(do_AX12action(_client, "OVERTURBON\n"))
-      // do_AX12action(_client, "OUVRIRCANON\n");
-      state++;
+		case 30:
+      //if(theta_odo > -2.4 && theta_odo < -2.3)
+      if(check_position(_client))
+        state = 40;
       break;
-    case 17:
-      // Tempo
+    case 40:
+			move_xy(_client, 0, -0.235);
+			state = 50;
+			break;
+		case 50:
+			//if((x_odo > -0.05 && x_odo < 0.05) && (y_odo > -0.285 && y_odo < -0.185))
+      if(check_position(_client))
+    		state = 60;
+			break;
+		case 60:
+ 			angle(_client, -2.36);
+			state++;
+			break;
+    case 61:
+      if(check_position(_client))
+        state = 70;
+      break;
+		case 70: //ramasse les balles de la bonne couleur
+      //do_AX12action(_client, "TRICANON\n");
+      state = 80;
+      break;
+    case 80:
+      //if(do_AX12action(_client, "OVERTRICANON\n"))
+      state = 90;
+      break;
+		case 90:
+			move_xy(_client, 0.1, -0.13);
+			state = 100;
+			break;
+		case 100:
+			//if((x_odo > 0.01 && x_odo < 0.15) && (y_odo > -0.18 && y_odo < -0.08))
+      if(check_position(_client))
+    		state = 110;
+			break;
+		case 110:
+ 			angle(_client, 1.571);
+			state++;
+			break;
+    case 111:
+      if(check_position(_client))
+        state = 120;
+      break;
+		case 120:
+			move_xy(_client, 0.1, 0.05);
+			state = 130;
+			break;
+		case 130:
+			//if((x_odo > 0.05 && x_odo < 0.15) && (y_odo > 0 && y_odo < 0.15))
+      if(check_position(_client))
+    		state = 140;
+			break;
+		case 140:
+ 			angle(_client, 1.571);
+			state++;
+			break;
+    case 141:
+      if(check_answer(_client))
+        state = 150;
+      break;
+		case 150: //envoie les balles dans la citerne
+      //do_AX12action(_client, "TURBON\n");
+      state = 160;
+			break;
+    case 160:
+      // if(do_AX12action(_client, "OVERTURBON\n"))
+      state = 161;
+      break;
+    case 161:
+      // do_AX12action(_client, "OUVRIRCANON\n");
+      state = 162;
+      break;
+    case 162:
+      // if(check_AX12action(_client, "OVEROUVRIRCANON\n"))
+      state = 170;
+      break;
+    case 170:
+      // Tempo le temps de lancer les balles
       tempo++;
       if(tempo > 20)
       {
-        state++;
+        state = 180;
         tempo = 0;
       }
       break;
-    case 18:
+    case 180:
       // do_AX12action(_client, "TURBOFF\n");
+      state++;
+      break;
+    case 181:
       // if(do_AX12action(_client, "OVERTURBOFF\n"))
+      state = 190;
+      break;
+    case 190:
+      // do_AX12action(_client, "FERMERCANON\n");
       state++;
       break;
-    case 19:
-      // do_AX12action(_client, "FERMERCANON\n")
+    case 191:
       // if(do_AX12action(_client, "OVERFERMERCANON\n"))
-      state++;
+      state = 200;
       break;
-		case 20:
+		case 200:
  			angle(_client, -0.786);
 			state++;
 			break;
-		case 21:
+    case 201:
+      if(check_position(_client))
+        state = 210;
+      break;
+		case 210:
 			move_xy(_client, 0.61, -0.56);
-			state++;
+			state = 220;
 			break;
-		case 22:
-			if((x_odo > 0.56 && x_odo < 0.66) && (y_odo > -0.61 && y_odo < -0.51))
-    		state++;
+		case 220:
+			//if((x_odo > 0.56 && x_odo < 0.66) && (y_odo > -0.61 && y_odo < -0.51))
+      if(check_position(_client))
+    		state = 230;
 			break;
-		case 23:
+		case 230:
  			angle(_client, 0);
-			state++;
+			state = 240;
 			break;
-		case 24:
+		case 240:
 			move_xy(_client, 2.14, -0.6);
-			state++;
+			state = 250;
 			break;
-		case 25:
-			if((x_odo > 1.99 && x_odo < 2.19) && (y_odo > -0.65 && y_odo < -0.55))
-    		state++;
+		case 250:
+			//if((x_odo > 1.99 && x_odo < 2.19) && (y_odo > -0.65 && y_odo < -0.55))
+      if(check_position(_client))
+    		state = 260;
 			break;
-		case 26:
+		case 260:
  			angle(_client, -0.838);
 			state++;
 			break;
-		case 27:
-			move_xy(_client, 2.595, -1.14);
-			state++;
-			break;
-		case 28:
-			if((x_odo > 2.545 && x_odo < 2.645) && (y_odo > -1.19 && y_odo < -1.09))
-    		state++;
-			break;
-		case 29:
- 			angle(_client, -2.478);
-			state++;
-			break;
-		case 30:
-			move_xy(_client, 2.34, -1.34);
-			state++;
-			break;
-		case 31:
-			if((x_odo > 2.29 && x_odo < 2.39) && (y_odo > -1.39 && y_odo < -1.29))
-    		state++;
-			break;
-		case 32:
- 			angle(_client, -2.478);
-			state++;
-			break;
-		case 33: //ramasse les balles qui sont à trier
-      // do_AX12action(_client, "TRIALT\n");
-      state++;
+    case 271:
+      if(check_position(_client))
+        state = 270;
       break;
-    case 34:
-      //if(do_AX12action(_client, "OVERTRIALT\n"))
-			tempo++;
-			if(tempo > 20)
-			{
-  			state++;
-  			tempo = 0;
-			}
-			break;
-		case 35:
+		case 270:
 			move_xy(_client, 2.595, -1.14);
+			state = 280;
+			break;
+		case 280:
+			//if((x_odo > 2.545 && x_odo < 2.645) && (y_odo > -1.19 && y_odo < -1.09))
+      if(check_position(_client))
+    		state = 290;
+			break;
+		case 290:
+ 			angle(_client, -2.478);
 			state++;
+			break;
+    case 291:
+      if(check_position(_client))
+        state = 300;
+      break;
+		case 300:
+			move_xy(_client, 2.34, -1.34);
+			state = 310;
+			break;
+		case 310:
+			//if((x_odo > 2.29 && x_odo < 2.39) && (y_odo > -1.39 && y_odo < -1.29))
+      if(check_position(_client))
+    		state = 320;
+			break;
+		case 320:
+ 			angle(_client, -2.478);
+			state++;
+			break;
+    case 321:
+      if(check_position(_client))
+        state = 330;
+      break;
+		case 330: //ramasse les balles qui sont à trier
+      // do_AX12action(_client, "TRIALT\n");
+      state = 340;
+      break;
+    case 340:
+      //if(do_AX12action(_client, "OVERTRIALT\n"))
+			state = 350;
+			break;
+		case 350:
+			move_xy(_client, 2.595, -1.14);
+			state = 260;
 			break;
 		case 36:
-			if((x_odo > 2.545 && x_odo < 2.645) && (y_odo > -1.19 && y_odo < -1.09))
-    		state++;
+			//if((x_odo > 2.545 && x_odo < 2.645) && (y_odo > -1.19 && y_odo < -1.09))
+      if(check_position(_client))
+    		state = 370;
 			break;
-		case 37:
+		case 370:
  			angle(_client, -3.648);
 			state++;
 			break;
-		case 38:
+    case 371:
+      if(check_position(_client))
+        state = 380;
+      break;
+		case 380:
 			move_xy(_client, 1.45, -0.52);
-			state++;
+			state = 390;
 			break;
-		case 39:
-			if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -0.57 && y_odo < -0.47))
-    		state++;
+		case 390:
+			//if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -0.57 && y_odo < -0.47))
+      if(check_position(_client))
+    		state = 400;
 			break;
-		case 40:
+		case 400:
  			angle(_client, 1.571);
 			state++;
 			break;
-		case 41:
+    case 401:
+      if(check_position(_client))
+        state = 410;
+      break;
+		case 410:
 			move_xy(_client, 1.45, -1.09);
-			state++;
+			state = 420;
 			break;
-		case 42:
-			if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -1.14 && y_odo < -1.04))
-    		state++;
+		case 420:
+			//if((x_odo > 1.4 && x_odo < 1.5) && (y_odo > -1.14 && y_odo < -1.04))
+      if(check_position(_client))
+    		state = 430;
 			break;
-		case 43: //dépose balles triées
+		case 430: //dépose balles triées
       //do_AX12action(_client, "OUVRIRTRAPPE\n");
-      state++;
+      state = 440;
       break;
-    case 44:
+    case 440:
       //if(do_AX12action(_client, "OVEROUVRIRTRAPPE\n"))
-      state++;
+      state = 450;
       break;
-    case 45:
+    case 450:
       //tempo pour que les balles tombent
 			tempo++;
 			if(tempo > 20)
 			{
-  			state++;
+  			state = 460;
   			tempo = 0;
 			}
 			break;
-    case 46:
+    case 460:
       //do_AX12action(_client, "FERMERTRAPPE\n");
-      state++;
+      state = 470;
       break;
-    case 47:
+    case 470:
       //if(do_AX12action(_client, "OVERFERMERTRAPPE\n"))
-      state++;
+      state = 480;
       break;
-		case 48:
+		case 480:
  			angle(_client, 2.443);
 			state++;
 			break;
-		case 49:
+    case 481:
+      if(check_position(_client))
+        state = 490;
+      break;
+		case 490:
 			move_xy(_client, 0.085, 0);
-			state++;
+			state = 500;
 			break;
-		case 50:
-			if((x_odo > 0.035 && x_odo < 0.135) && (y_odo > -0.05 && y_odo < 0.05))
-    		state++;
+		case 500:
+			//if((x_odo > 0.035 && x_odo < 0.135) && (y_odo > -0.05 && y_odo < 0.05))
+      if(check_position(_client))
+    		state = 510;
 			break;
-		case 51:
+		case 510:
  			angle(_client, 1.571);
 			state++;
 			break;
-		case 52: //Tire balles triées
+    case 511:
+      if(check_position(_client))
+        state = 520;
+      break;
+		case 520: //Tire balles triées
       //do_AX12action(_client, "TURBON\n");
-      state++;
+      state = 530;
       break;
-    case 53:
+    case 530:
       //if(do_AX12action(_client, "OVERTURBON\n"))
-      state++;
+      state = 540;
       break;
-    case 54:
+    case 540:
       //do_AX12action(_client, "OUVRIRCANON\n");
-      state++;
+      state = 550;
       break;
-    case 55:
+    case 550:
       //if(do_AX12action(_client, "OVEROUVRIRCANON\n"))
-      state++;
+      state = 560;
       break;
-    case 56:
+    case 560:
       // Tempo le temps de lancer les balles
 			tempo++;
 			if(tempo > 20)
 			{
-  			state++;
+  			state = 570;
   			tempo = 0;
 			}
 			break;
-    case 57:
+    case 570:
       //do_AX12action(_client, "FERMERCANON\n");
-      state++;
+      state = 580;
       break;
-    case 58:
+    case 580:
       //if(do_AX12action(_client, "OVERFERMERCANON\n"))
       state = 0;
       break;
@@ -402,14 +530,34 @@ void script_callback(const ros::TimerEvent& trash)
   << " " << state << std::endl;
 }
 
+string getStart(ros::ServiceClient client)
+{
+  string value;
+  comm::Comm srv;
+
+  srv.request.command = "MATCHSTATUS\n";
+
+  if(client.call(srv))
+    value = (string)srv.response.answer;
+
+  return value;
+}
+
 int main(int argc, char** argv)
 {
+  string start = getStart(_client);
+  while (start != "1")
+  {
+    start = getStart(_client);
+  }
+
   ros::init(argc, argv, "script_match");
   ros::NodeHandle n;
-  
+
   _client = n.serviceClient<comm::Comm>("pic_pi_comm");
   //do_AX12action(_client, "AX12INIT\n");
   //ros::Subscriber sub = n.subscribe("odom", 1000, odo_callback);
+  ros::Subscriber sub = n.subscribe("scan", 1000, lidar_callback);
 
   //ros::Rate r(5);
   //if (do_AX12action(_client, "OVERAX12INIT\n"))
