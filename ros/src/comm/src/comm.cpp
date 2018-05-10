@@ -40,13 +40,42 @@ public:
   {
     size_t nb_char;
     string str;
+    string ackStr;
+    // step 1: on flush l'uart
     uart.flush();
+    // step 2: on envoie l'ordre
     uart.write(req.command);
+    //step 3: on attend le resultat
     nb_char = uart.available();
-    if(nb_char > 0)
-      uart.read(str, nb_char);
+    //step 4: on recupère l'ack
+    if(nb_char > 0) {
+        uart.readline(ackStr);
+        cout << ackStr << endl;
+    } else {
+        // on a pas recu d'ack, on suppose que l epic n'as rien recu
+      cout << "nothing received from pic" << endl;
+      ROS_ERROR("Command send to pic didn't gave any response");
+        return false;
+    }
+    // step 5: on lit le resultat de la commande (s'il y en a un )
+    nb_char = uart.available();
+    if(nb_char > 0) {
+        uart.read(str, nb_char);
+        cout << str << endl;
+    }
     res.answer = str;
-
+    // step 6: on verifie que l'ack est valide
+            // remarque: si la commande est malformé ou correspond a une fonction inexistante, le message d'erreur se trouvera dans le resultat (str)
+    if (ackStr.find("ACK") == string::npos){
+      cout << "The ACK part of the response does not contain the ACK string" << endl;
+      ROS_ERROR("The ACK part of the response does not contain the ACK string");
+      return false;
+    }
+    if (str.find("ERROR") != string::npos){
+      cout << str << endl;
+      ROS_ERROR(str);
+      return false;
+    }
     return true;
   }
 };
