@@ -3,6 +3,7 @@ project(script_match)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  laser_geometry
   nav_msgs
   tf
   comm

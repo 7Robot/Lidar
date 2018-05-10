@@ -49,7 +49,7 @@ void lidar_callback(const sensor_msgs::LaserScan::ConstPtr& scan_in)
   //Check devant
   for(int i = 592; i < 788; i += 2)
   {
-    if(scan_in->ranges[i] < 0.3 && lidar_enable_av)
+    if(scan_in->ranges[i] < 0.35 && lidar_enable_av)
     {
        obstacle_av++;
     }
@@ -58,7 +58,7 @@ void lidar_callback(const sensor_msgs::LaserScan::ConstPtr& scan_in)
   //Check derriere
   for(int i = 22; i < 218; i += 2)
   {
-    if(scan_in->ranges[i] < 0.3 && lidar_enable_ar)
+    if(scan_in->ranges[i] < 0.35 && lidar_enable_ar)
     {
       obstacle_ar++;
     }
@@ -72,7 +72,7 @@ void lidar_callback(const sensor_msgs::LaserScan::ConstPtr& scan_in)
 	srv.request.command = "STOP\n";
 	if(_client.call(srv))
 		;
-     cout << date.sec << " " << date.nsec << " obstacle av"  << endl; 
+     cout << date.sec << " " << date.nsec << " obstacle av"  << endl;
       p_obstacle_av = true;
     }
     if(obstacle_ar > 3 && !p_obstacle_ar)
@@ -103,7 +103,7 @@ void lidar_callback(const sensor_msgs::LaserScan::ConstPtr& scan_in)
 		;
       cout << date.sec << " " << date.nsec << " fin obstacle ar" << endl;
     }*/
-  
+
 }
 
 void get_odo(ros::ServiceClient client, float &x, float &y, float &theta)
@@ -156,7 +156,7 @@ bool do_AX12action(ros::ServiceClient client, string command)
   bool etatComm = false;
 
   srv.request.command = command;
-  
+
   if(client.call(srv))
     etatComm = true;
   return etatComm;
@@ -192,7 +192,7 @@ bool move_xy(ros::ServiceClient client, float x, float y)
   ss << "MOVESEG " << x << " " << y << endl;
 
   srv.request.command = ss.str();
-  
+
   if(client.call(srv))
   {
     str = (string)srv.response.answer;
@@ -223,70 +223,71 @@ bool angle(ros::ServiceClient client, float theta)
   return ok;
 }
 
-void script_callback(const ros::TimerEvent& trash)
+void cote_orange()
 {
-	static int state = 0;
-	static int tempo = 0;
-
-  float x_odo = 0;
-  float y_odo = 0;
-  float theta_odo = 0;
-
-  string start;
-
-  ros::Time date;
-  date = ros::Time::now();
+  static int state = 0;
 
   switch(state)
   {
-  case 0:
-	start = getStart(_client);
-   	if(start.find("MATCH:1") != string::npos)
-  	{
-    		state = 1;
-  	}
-	break;
-  case 1:
+    //le switch ici
+  }
+}
+
+void cote_vert()
+{
+  static int state = 0;
+  static int tempo = 0;
+  string start;
+
+  switch (state)
+  {
+    case 0:
+    	start = getStart(_client);
+      if(start.find("MATCH:1") != string::npos)
+        state++;
+    	break;
+    case 1:
       move_xy(_client, 0.22, 0);
   		state = 10;
   		break;
-		case 10:
-			//if((x_odo > 0.17 && x_odo < 0.27) && (y_odo > -0.05 && y_odo < 0.05))
+  	case 10:
+  		//if((x_odo > 0.17 && x_odo < 0.27) && (y_odo > -0.05 && y_odo < 0.05))
       if(check_position(_client))
   			state = 20;
-			break;
-		case 20:
-			lidar_enable_ar = 0;
-			lidar_enable_av = 0;
- 			angle(_client, -2.36);
-			state = 30;
-			break;
-		case 30:
+  		break;
+  	case 20:
+  		lidar_enable_ar = 0;
+  		lidar_enable_av = 0;
+  		angle(_client, -2.36);
+  		state = 30;
+  		break;
+  	case 30:
       //if(theta_odo > -2.4 && theta_odo < -2.3)
       if(check_position(_client))
         state = 40;
       break;
     case 40:
-			lidar_enable_ar = 1;
-			move_xy(_client, 0, -0.235);
-			state = 50;
-			break;
-		case 50:
-			//if((x_odo > -0.05 && x_odo < 0.05) && (y_odo > -0.285 && y_odo < -0.185))
+  		lidar_enable_ar = 1;
+  		move_xy(_client, 0, -0.235);
+  		state = 50;
+  		break;
+  	case 50:
+  		//if((x_odo > -0.05 && x_odo < 0.05) && (y_odo > -0.285 && y_odo < -0.185))
       if(check_position(_client))
     		state = 60;
-	break;
+  	  break;
     case 60:
-	lidar_enable_ar = 0;
-	lidar_enable_av = 0;
- 	angle(_client, -2.36);
-	state++;
-	break;
+    	lidar_enable_ar = 0;
+    	lidar_enable_av = 0;
+     	angle(_client, -2.36);
+    	state++;
+    	break;
     case 61:
       if(check_position(_client))
-        state = 90;
+        state = 70;
       break;
-    case 70: //ramasse les balles de la bonne couleur
+    case 70:
+      //ramasse les balles de la bonne couleur
       //do_AX12action(_client, "TRICANON\n");
       state = 80;
       break;
@@ -295,51 +296,53 @@ void script_callback(const ros::TimerEvent& trash)
       state = 90;
       break;
     case 90:
-  	lidar_enable_ar = 1;
-	move_xy(_client, 0.1, -0.13);
-	state = 100;
-	break;
+    	lidar_enable_ar = 1;
+    	move_xy(_client, 0.1, -0.13);
+    	state = 100;
+    	break;
     case 100:
-			//if((x_odo > 0.01 && x_odo < 0.15) && (y_odo > -0.18 && y_odo < -0.08))
+  		//if((x_odo > 0.01 && x_odo < 0.15) && (y_odo > -0.18 && y_odo < -0.08))
       if(check_position(_client))
-    		state = 101;
-	break;
-    case 101:
-	lidar_enable_ar = 0;
-	angle(_client, 0);
-	state++;
-	break;
+    		state = 110;
+  	  break;
+    /*case 101:
+    	lidar_enable_ar = 0;
+    	angle(_client, 0);
+    	state++;
+  	  break;
     case 102:
-	if(check_position(_client))
-		state++;
-	break;
+    	if(check_position(_client))
+    		state++;
+    	break;
     case 103:
-	lidar_enable_av = 1;
-	lidar_enable_ar = 0;
-        move_xy(_client, 0.7, -0.13);
-	state++;
-	break;
+    	lidar_enable_av = 1;
+    	lidar_enable_ar = 0;
+      move_xy(_client, 0.7, -0.13);
+  	  state++;
+      break;
     case 104:
- 	if(check_position(_client))
-		state++;
-	break;
+     	if(check_position(_client))
+    		state++;
+    	break;
     case 105:
-	lidar_enable_av = 0;
-	lidar_enable_ar = 1;
-	move_xy(_client, 0.3, -0.13);
-	state = 102;
-	break;
+    	lidar_enable_av = 0;
+    	lidar_enable_ar = 1;
+    	move_xy(_client, 0.3, -0.13);
+    	state = 102;
+    	break;*/
     case 110:
-	lidar_enable_ar = 0;
-	angle(_client, 1.571);
-	state++;
-	break;
+    	lidar_enable_ar = 0;
+    	angle(_client, 1.571);
+    	state++;
+    	break;
     case 111:
       if(check_position(_client))
         state = 120;
       break;
 		case 120:
-			
+    ////////// Check Lidar
+      lidar_enable_ar = 1;
+      lidar_enable_av = 0;
 			move_xy(_client, 0.1, 0.05);
 			state = 130;
 			break;
@@ -398,6 +401,8 @@ void script_callback(const ros::TimerEvent& trash)
       state = 200;
       break;
 		case 200:
+      lidar_enable_ar = 0;
+      lidar_enable_av = 0;
  			angle(_client, -0.786);
 			state++;
 			break;
@@ -406,21 +411,28 @@ void script_callback(const ros::TimerEvent& trash)
         state = 210;
       break;
 		case 210:
-		lidar_enable_av = 1;
-		lidar_enable_ar = 1;	
-			move_xy(_client, 0.61, -0.56);
-			state = 220;
-			break;
+  		lidar_enable_av = 1;
+  		//lidar_enable_ar = 1;
+  		move_xy(_client, 0.61, -0.56);
+  		state = 220;
+  		break;
 		case 220:
 			//if((x_odo > 0.56 && x_odo < 0.66) && (y_odo > -0.61 && y_odo < -0.51))
       if(check_position(_client))
     		state = 230;
 			break;
 		case 230:
+      lidar_enable_ar = 0;
+      lidar_enable_av = 0;
  			angle(_client, 0);
-			state = 240;
+			state++;
 			break;
+    case 231:
+      if(check_position(_client))
+        state = 240;
+      break;
 		case 240:
+      lidar_enable_av = 1;
 			move_xy(_client, 2.14, -0.6);
 			state = 250;
 			break;
@@ -430,6 +442,7 @@ void script_callback(const ros::TimerEvent& trash)
     		state = 260;
 			break;
 		case 260:
+      lidar_enable_av = 0;
  			angle(_client, -0.838);
 			state++;
 			break;
@@ -438,6 +451,7 @@ void script_callback(const ros::TimerEvent& trash)
         state = 270;
       break;
 		case 270:
+      lidar_enable_av = 1;
 			move_xy(_client, 2.595, -1.14);
 			state = 280;
 			break;
@@ -447,6 +461,7 @@ void script_callback(const ros::TimerEvent& trash)
     		state = 290;
 			break;
 		case 290:
+      lidar_enable_av = 0;
  			angle(_client, -2.478);
 			state++;
 			break;
@@ -480,6 +495,8 @@ void script_callback(const ros::TimerEvent& trash)
 			state = 350;
 			break;
 		case 350:
+      ///////// Check Lidar
+      lidar_enable_ar = 1;
 			move_xy(_client, 2.595, -1.14);
 			state = 260;
 			break;
@@ -489,6 +506,7 @@ void script_callback(const ros::TimerEvent& trash)
     		state = 370;
 			break;
 		case 370:
+      lidar_enable_ar = 0;
  			angle(_client, -3.648);
 			state++;
 			break;
@@ -497,6 +515,7 @@ void script_callback(const ros::TimerEvent& trash)
         state = 380;
       break;
 		case 380:
+      lidar_enable_av = 1;
 			move_xy(_client, 1.45, -0.52);
 			state = 390;
 			break;
@@ -506,6 +525,7 @@ void script_callback(const ros::TimerEvent& trash)
     		state = 400;
 			break;
 		case 400:
+      lidar_enable_av = 0;
  			angle(_client, 1.571);
 			state++;
 			break;
@@ -514,6 +534,7 @@ void script_callback(const ros::TimerEvent& trash)
         state = 410;
       break;
 		case 410:
+      lidar_enable_ar = 1;
 			move_xy(_client, 1.45, -1.09);
 			state = 420;
 			break;
@@ -548,6 +569,7 @@ void script_callback(const ros::TimerEvent& trash)
       state = 480;
       break;
 		case 480:
+      lidar_enable_ar = 0;
  			angle(_client, 2.443);
 			state++;
 			break;
@@ -556,6 +578,7 @@ void script_callback(const ros::TimerEvent& trash)
         state = 490;
       break;
 		case 490:
+      lidar_enable_av = 1;
 			move_xy(_client, 0.085, 0);
 			state = 500;
 			break;
@@ -565,6 +588,7 @@ void script_callback(const ros::TimerEvent& trash)
     		state = 510;
 			break;
 		case 510:
+      lidar_enable_av = 0;
  			angle(_client, 1.571);
 			state++;
 			break;
@@ -598,14 +622,47 @@ void script_callback(const ros::TimerEvent& trash)
 			}
 			break;
     case 570:
-      //do_AX12action(_client, "FERMERCANON\n");
+      //do_AX12action(_client, "TURBOFF\n");
       state = 580;
       break;
     case 580:
-      //if(do_AX12action(_client, "OVERFERMERCANON\n"))
+      //if(do_AX12action(_client, "OVERTURBOFF\n"))
       state = 0;
       break;
-	}
+  }
+}
+
+string get_team(ros::ServiceClient client)
+{
+  string value;
+  comm::Comm srv;
+
+  srv.request.command = "GETTEAM\n";
+
+  if(client.call(srv))
+    value = (string)srv.response.answer;
+
+  return value;
+}
+
+void script_callback(const ros::TimerEvent& trash)
+{
+	static int state = 0;
+	static int tempo = 0;
+
+  float x_odo = 0;
+  float y_odo = 0;
+  float theta_odo = 0;
+
+  ros::Time date;
+  date = ros::Time::now();
+
+  string team = get_team(_client);
+  if (team.find("COULEUR:0"))
+    cote_orange();
+  else
+    cote_vert();
+
   //std::cout << date.sec << " " << date.nsec << " " << x_odo << " " << y_odo << " " << theta_odo
   //<< " " << state << std::endl;
 }
